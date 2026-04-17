@@ -20,6 +20,7 @@
         :root {
             --primary: #36BEFF;
             --primary-dark: #1AA0E0;
+            --primary-light: #E6F7FF;
             --success: #27AE60;
             --warning: #F39C12;
             --danger: #E74C3C;
@@ -28,6 +29,7 @@
             --text: #1A1A1A;
             --text-secondary: #6B7280;
             --border: #E5E7EB;
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
         }
 
         body {
@@ -145,7 +147,8 @@
 
         .header-stats {
             display: flex;
-            gap: 24px;
+            gap: 16px;
+            align-items: center;
         }
 
         .stat-badge {
@@ -155,7 +158,7 @@
             padding: 8px 16px;
             background: white;
             border-radius: 50px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            box-shadow: var(--shadow);
         }
 
         .connection-status {
@@ -189,65 +192,74 @@
             padding: 24px;
         }
 
+        /* Statistics Cards */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 32px;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
         }
 
         .stat-card {
             background: white;
             border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            padding: 20px;
+            box-shadow: var(--shadow);
             border: 1px solid var(--border);
         }
 
         .stat-label {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text-secondary);
             margin-bottom: 8px;
         }
 
         .stat-value {
-            font-size: 36px;
+            font-size: 32px;
             font-weight: 800;
             color: var(--primary);
         }
 
-        .orders-section {
+        .stat-sub {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Revenue Section */
+        .revenue-section {
             background: white;
             border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
             border: 1px solid var(--border);
         }
 
-        .section-header {
+        .revenue-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
         }
 
-        .section-title {
-            font-size: 20px;
+        .revenue-title {
+            font-size: 18px;
             font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
-        .filter-tabs {
+        .period-selector {
             display: flex;
             gap: 8px;
         }
 
-        .filter-tab {
+        .period-btn {
             padding: 8px 16px;
             border-radius: 50px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             background: var(--bg);
@@ -255,9 +267,87 @@
             transition: all 0.3s;
         }
 
-        .filter-tab:hover {
-            background: var(--primary-light);
+        .period-btn.active {
+            background: var(--primary);
+            color: white;
             border-color: var(--primary);
+        }
+
+        .revenue-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .revenue-card {
+            background: var(--bg);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .revenue-card-title {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .revenue-card-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--success);
+        }
+
+        .revenue-card-detail {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 12px;
+            font-size: 13px;
+        }
+
+        /* Orders Section */
+        .orders-section {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 6px;
+        }
+
+        .filter-tab {
+            padding: 8px 14px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            transition: all 0.3s;
         }
 
         .filter-tab.active {
@@ -266,19 +356,38 @@
             border-color: var(--primary);
         }
 
+        .clear-all-btn {
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            background: var(--danger);
+            color: white;
+            border: none;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .clear-all-btn:hover {
+            background: #c0392b;
+        }
+
         /* Orders List */
         .orders-list {
             display: flex;
             flex-direction: column;
             gap: 12px;
-            max-height: 600px;
+            max-height: 500px;
             overflow-y: auto;
         }
 
         .order-card {
             background: var(--bg);
             border-radius: 12px;
-            padding: 20px;
+            padding: 16px;
             border: 1px solid var(--border);
             transition: all 0.3s;
             animation: slideIn 0.3s ease;
@@ -287,68 +396,69 @@
         .order-card.new {
             background: #E6F7FF;
             border-color: var(--primary);
-            animation: highlight 1s ease;
         }
 
         @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        @keyframes highlight {
-            0%, 100% { background: var(--bg); }
-            50% { background: #E6F7FF; }
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
         .order-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         .order-id {
             font-weight: 700;
             color: var(--primary);
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .order-time {
             color: var(--text-secondary);
-            font-size: 12px;
+            font-size: 11px;
         }
 
         .order-info {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 16px;
-            margin-bottom: 16px;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 12px;
+            margin-bottom: 12px;
         }
 
         .order-info-item {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 2px;
         }
 
         .order-info-label {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-secondary);
         }
 
         .order-info-value {
             font-weight: 600;
+            font-size: 13px;
         }
 
+        .order-type-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 50px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .type-table { background: var(--primary-light); color: var(--primary-dark); }
+        .type-delivery { background: #FEF3C7; color: #D97706; }
+
         .order-items {
-            margin-bottom: 16px;
-            padding: 12px;
+            margin-bottom: 12px;
+            padding: 10px;
             background: white;
             border-radius: 8px;
         }
@@ -356,40 +466,59 @@
         .order-item {
             display: flex;
             justify-content: space-between;
-            padding: 6px 0;
-            font-size: 14px;
+            padding: 4px 0;
+            font-size: 13px;
         }
 
         .order-total {
             text-align: right;
             font-weight: 700;
-            font-size: 18px;
+            font-size: 16px;
             color: var(--primary);
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         .order-actions {
             display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
         }
 
         .status-select {
-            padding: 10px 16px;
+            padding: 8px 12px;
             border-radius: 8px;
             border: 1px solid var(--border);
             background: white;
             font-weight: 500;
+            font-size: 12px;
             cursor: pointer;
             flex: 1;
         }
 
         .status-badge {
-            padding: 6px 12px;
+            padding: 5px 10px;
             border-radius: 50px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
+        }
+
+        .delete-order-btn {
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .delete-order-btn:hover {
+            background: #c0392b;
         }
 
         .status-pending { background: #FEF3C7; color: #D97706; }
@@ -434,14 +563,8 @@
         }
 
         @keyframes toastSlideIn {
-            from {
-                opacity: 0;
-                transform: translateX(100px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+            from { opacity: 0; transform: translateX(100px); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
         .toast-icon {
@@ -474,15 +597,21 @@
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
-                gap: 16px;
+                gap: 12px;
             }
             
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
+            .section-header {
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
             }
             
-            .order-info {
+            .revenue-grid {
                 grid-template-columns: 1fr;
+            }
+            
+            .order-actions {
+                flex-wrap: wrap;
             }
         }
     </style>
@@ -551,6 +680,41 @@
                 </div>
             </div>
 
+            <!-- Revenue Section -->
+            <div class="revenue-section">
+                <div class="revenue-header">
+                    <div class="revenue-title">
+                        <i class="fas fa-chart-line"></i>
+                        Gəlir Statistikası
+                    </div>
+                    <div class="period-selector">
+                        <button class="period-btn active" onclick="changePeriod(1)">1 Gün</button>
+                        <button class="period-btn" onclick="changePeriod(3)">3 Gün</button>
+                        <button class="period-btn" onclick="changePeriod(7)">7 Gün</button>
+                    </div>
+                </div>
+                <div class="revenue-grid">
+                    <div class="revenue-card">
+                        <div class="revenue-card-title">Ümumi Gəlir</div>
+                        <div class="revenue-card-value" id="totalRevenue">0.00 ₼</div>
+                    </div>
+                    <div class="revenue-card">
+                        <div class="revenue-card-title">Masa Daxili</div>
+                        <div class="revenue-card-value" id="tableRevenue">0.00 ₼</div>
+                        <div class="revenue-card-detail">
+                            <span>Sifariş: <span id="tableOrderCount">0</span></span>
+                        </div>
+                    </div>
+                    <div class="revenue-card">
+                        <div class="revenue-card-title">Çatdırılma</div>
+                        <div class="revenue-card-value" id="deliveryRevenue">0.00 ₼</div>
+                        <div class="revenue-card-detail">
+                            <span>Sifariş: <span id="deliveryOrderCount">0</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Orders Section -->
             <div class="orders-section">
                 <div class="section-header">
@@ -558,11 +722,16 @@
                         <i class="fas fa-clipboard-list"></i>
                         Sifarişlər
                     </div>
-                    <div class="filter-tabs">
-                        <div class="filter-tab active" onclick="filterOrders('all')">Hamısı</div>
-                        <div class="filter-tab" onclick="filterOrders('pending')">Gözləyən</div>
-                        <div class="filter-tab" onclick="filterOrders('preparing')">Hazırlanan</div>
-                        <div class="filter-tab" onclick="filterOrders('ready')">Hazır</div>
+                    <div class="section-actions">
+                        <div class="filter-tabs">
+                            <button class="filter-tab active" onclick="filterOrders('all')">Hamısı</button>
+                            <button class="filter-tab" onclick="filterOrders('pending')">Gözləyən</button>
+                            <button class="filter-tab" onclick="filterOrders('preparing')">Hazırlanan</button>
+                            <button class="filter-tab" onclick="filterOrders('ready')">Hazır</button>
+                        </div>
+                        <button class="clear-all-btn" onclick="clearAllOrders()">
+                            <i class="fas fa-trash-alt"></i> Hamısını Sil
+                        </button>
                     </div>
                 </div>
                 <div class="orders-list" id="ordersList">
@@ -579,19 +748,21 @@
     <!-- Notification Toast Container -->
     <div class="notification-toast" id="toastContainer"></div>
 
-    <!-- Hidden Audio for Notifications -->
+    <!-- Hidden Audio -->
     <audio id="notificationSound" preload="auto">
         <source src="data:audio/wav;base64,UklGRlwAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YVoAAACAgICAf39/f39/f39/f3+AgICAf39/f39/f39/f3+AgICAf39/f39/f39/f3+AgICAf39/f39/f39/f38=" type="audio/wav">
     </audio>
 
     <script>
         // ============================================
-        // ADMIN PANEL SCRIPT
+        // ADMIN PANEL SCRIPT - YENİ VERSİYA
         // ============================================
         
         let ws = null;
         let orders = [];
+        let dailyRevenue = JSON.parse(localStorage.getItem('istanbulDailyRevenue') || '{}');
         let currentFilter = 'all';
+        let currentPeriod = 1;
         let secret = localStorage.getItem('admin_secret') || '';
         let reconnectAttempts = 0;
         const maxReconnectAttempts = 5;
@@ -622,7 +793,6 @@
                 return;
             }
             
-            // Test connection with HTTP first
             fetch('/api/admin/auth', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -645,7 +815,6 @@
             });
         }
 
-        // Logout function
         function logout() {
             localStorage.removeItem('admin_secret');
             secret = '';
@@ -655,7 +824,6 @@
             document.getElementById('secretInput').value = '';
         }
 
-        // Connect WebSocket
         function connectWebSocket() {
             const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
             const wsUrl = `${protocol}//${window.location.host}`;
@@ -668,49 +836,34 @@
                 connectionText.textContent = 'Online';
                 reconnectAttempts = 0;
                 
-                // Register as admin
-                ws.send(JSON.stringify({
-                    type: 'REGISTER_ADMIN',
-                    secret: secret
-                }));
+                ws.send(JSON.stringify({ type: 'REGISTER_ADMIN', secret }));
             };
             
             ws.onmessage = (event) => {
                 try {
                     const data = JSON.parse(event.data);
                     handleWebSocketMessage(data);
-                } catch (error) {
-                    console.error('Mesaj xətası:', error);
-                }
+                } catch (error) {}
             };
             
             ws.onclose = () => {
-                console.log('❌ WebSocket bağlantısı kəsildi');
                 connectionStatus.classList.add('disconnected');
                 connectionText.textContent = 'Offline';
-                
-                // Reconnect
                 if (reconnectAttempts < maxReconnectAttempts) {
                     reconnectAttempts++;
                     setTimeout(connectWebSocket, 3000);
-                    connectionText.textContent = `Yenidən bağlanır (${reconnectAttempts}/${maxReconnectAttempts})`;
                 }
-            };
-            
-            ws.onerror = (error) => {
-                console.error('WebSocket xətası:', error);
             };
         }
 
-        // Handle WebSocket messages
         function handleWebSocketMessage(data) {
             switch (data.type) {
                 case 'ADMIN_REGISTERED':
-                    console.log('👑 Admin qeydiyyatdan keçdi');
                     if (data.orders) {
                         orders = data.orders;
                         renderOrders();
                         updateStats();
+                        updateRevenueDisplay();
                     }
                     showNotification('Admin Panelə Xoş Gəldiniz', 'Bağlantı uğurla quruldu', 'success');
                     break;
@@ -718,26 +871,17 @@
                 case 'NEW_ORDER':
                     const newOrder = data.order;
                     orders.unshift(newOrder);
+                    saveOrderToRevenue(newOrder);
                     renderOrders();
                     updateStats();
+                    updateRevenueDisplay();
                     
-                    // Sound notification
                     if (data.notification?.sound) {
-                        playNotificationSound();
+                        notificationSound.currentTime = 0;
+                        notificationSound.play().catch(() => {});
                     }
                     
-                    // Visual notification
-                    showNotification(
-                        data.notification?.title || '🛎️ Yeni Sifariş!',
-                        data.notification?.body || `Yeni sifariş gəldi`,
-                        'new-order'
-                    );
-                    
-                    // Highlight new order
-                    setTimeout(() => {
-                        const firstCard = document.querySelector('.order-card');
-                        if (firstCard) firstCard.classList.add('new');
-                    }, 100);
+                    showNotification('🛎️ Yeni Sifariş!', data.notification?.body || 'Yeni sifariş gəldi', 'new-order');
                     break;
                     
                 case 'ORDER_UPDATED':
@@ -749,138 +893,157 @@
                         updateStats();
                     }
                     break;
-                    
-                case 'PONG':
-                    // Keep-alive response
-                    break;
-                    
-                case 'ERROR':
-                    showNotification('Xəta', data.message, 'error');
-                    break;
             }
         }
 
-        // Play notification sound
-        function playNotificationSound() {
-            notificationSound.currentTime = 0;
-            notificationSound.play().catch(e => console.log('Səs çalına bilmədi'));
+        // Gəliri localStorage-a saxla
+        function saveOrderToRevenue(order) {
+            const date = new Date(order.timestamp).toISOString().split('T')[0];
+            const hour = new Date(order.timestamp).getHours();
+            
+            // Yalnız 09:00-21:00 arası sifarişləri qeyd et
+            if (hour < 9 || hour >= 21) return;
+            
+            if (!dailyRevenue[date]) {
+                dailyRevenue[date] = { total: 0, table: 0, delivery: 0, tableCount: 0, deliveryCount: 0 };
+            }
+            
+            dailyRevenue[date].total += order.total || 0;
+            if (order.orderType === 'table' || order.table) {
+                dailyRevenue[date].table += order.total || 0;
+                dailyRevenue[date].tableCount++;
+            } else {
+                dailyRevenue[date].delivery += order.total || 0;
+                dailyRevenue[date].deliveryCount++;
+            }
+            
+            localStorage.setItem('istanbulDailyRevenue', JSON.stringify(dailyRevenue));
         }
 
-        // Show notification toast
-        function showNotification(title, body, type = 'info') {
-            const toast = document.createElement('div');
-            toast.className = 'toast-message';
+        // Sifarişi sil
+        function deleteOrder(orderId) {
+            if (!confirm('Bu sifarişi silmək istədiyinizə əminsiniz?')) return;
             
-            let icon = '🔔';
-            if (type === 'new-order') icon = '🛎️';
-            if (type === 'success') icon = '✅';
-            if (type === 'error') icon = '❌';
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                // Gəlirdən çıxartma (istəyə bağlı - gəlir qalsın deyə comment)
+                // removeOrderFromRevenue(order);
+            }
             
-            toast.innerHTML = `
-                <div class="toast-icon">${icon}</div>
-                <div class="toast-content">
-                    <div class="toast-title">${title}</div>
-                    <div class="toast-body">${body}</div>
-                </div>
-            `;
-            
-            toastContainer.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.remove();
-            }, 5000);
+            orders = orders.filter(o => o.id !== orderId);
+            renderOrders();
+            updateStats();
+            showNotification('Sifariş Silindi', `#${orderId} nömrəli sifariş silindi`, 'info');
         }
 
-        // Filter orders
-    function filterOrders(filter) {
-    currentFilter = filter;
-    document.querySelectorAll('.filter-tab').forEach(tab => {
-        tab.classList.remove('active');
-        if (tab.textContent.includes(getFilterName(filter))) {
-            tab.classList.add('active');
+        // Bütün sifarişləri sil
+        function clearAllOrders() {
+            if (!confirm('BÜTÜN sifarişləri silmək istədiyinizə əminsiniz? Gəlir məlumatları qalacaq.')) return;
+            
+            orders = [];
+            renderOrders();
+            updateStats();
+            showNotification('Sifarişlər Silindi', 'Bütün sifarişlər təmizləndi', 'success');
         }
-    });
-    renderOrders();
-}
 
-function getFilterName(filter) {
-    const names = { all: 'Hamısı', pending: 'Gözləyən', preparing: 'Hazırlanan', ready: 'Hazır' };
-    return names[filter] || 'Hamısı';
-}
+        // Gəlir hesabatı
+        function calculateRevenue(period) {
+            const dates = [];
+            for (let i = 0; i < period; i++) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                dates.push(d.toISOString().split('T')[0]);
+            }
+            
+            let total = 0, table = 0, delivery = 0, tableCount = 0, deliveryCount = 0;
+            
+            dates.forEach(date => {
+                if (dailyRevenue[date]) {
+                    total += dailyRevenue[date].total || 0;
+                    table += dailyRevenue[date].table || 0;
+                    delivery += dailyRevenue[date].delivery || 0;
+                    tableCount += dailyRevenue[date].tableCount || 0;
+                    deliveryCount += dailyRevenue[date].deliveryCount || 0;
+                }
+            });
+            
+            return { total, table, delivery, tableCount, deliveryCount };
+        }
 
-        // Update status
+        function updateRevenueDisplay() {
+            const rev = calculateRevenue(currentPeriod);
+            document.getElementById('totalRevenue').textContent = `${rev.total.toFixed(2)} ₼`;
+            document.getElementById('tableRevenue').textContent = `${rev.table.toFixed(2)} ₼`;
+            document.getElementById('deliveryRevenue').textContent = `${rev.delivery.toFixed(2)} ₼`;
+            document.getElementById('tableOrderCount').textContent = rev.tableCount;
+            document.getElementById('deliveryOrderCount').textContent = rev.deliveryCount;
+        }
+
+        function changePeriod(period) {
+            currentPeriod = period;
+            document.querySelectorAll('.period-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', (i === 0 && period === 1) || (i === 1 && period === 3) || (i === 2 && period === 7));
+            });
+            updateRevenueDisplay();
+        }
+
+        function filterOrders(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-tab').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.includes(getFilterName(filter))) btn.classList.add('active');
+            });
+            renderOrders();
+        }
+
+        function getFilterName(filter) {
+            const names = { all: 'Hamısı', pending: 'Gözləyən', preparing: 'Hazırlanan', ready: 'Hazır' };
+            return names[filter] || 'Hamısı';
+        }
+
         function updateOrderStatus(orderId, status) {
-            ws.send(JSON.stringify({
-                type: 'UPDATE_ORDER_STATUS',
-                orderId,
-                status
-            }));
-            
-            showNotification('Status Yeniləndi', `Sifariş ${orderId} statusu: ${status}`, 'success');
+            ws.send(JSON.stringify({ type: 'UPDATE_ORDER_STATUS', orderId, status }));
+            showNotification('Status Yeniləndi', `Sifariş statusu: ${status}`, 'success');
         }
 
-        // Render orders
         function renderOrders() {
-            let filteredOrders = orders;
-            
-            if (currentFilter !== 'all') {
-                filteredOrders = orders.filter(o => o.status === currentFilter);
-            }
+            let filteredOrders = orders.filter(o => currentFilter === 'all' || o.status === currentFilter);
             
             if (filteredOrders.length === 0) {
-                ordersList.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-inbox"></i>
-                        <h3>Sifariş yoxdur</h3>
-                        <p>${currentFilter === 'all' ? 'Yeni sifarişlər burada görünəcək' : 'Bu statusda sifariş yoxdur'}</p>
-                    </div>
-                `;
+                ordersList.innerHTML = `<div class="empty-state"><i class="fas fa-inbox"></i><h3>Sifariş yoxdur</h3></div>`;
                 return;
             }
             
             ordersList.innerHTML = filteredOrders.map(order => {
                 const statusClass = `status-${order.status}`;
-                const statusText = {
-                    pending: 'Gözləyir',
-                    preparing: 'Hazırlanır',
-                    ready: 'Hazırdır',
-                    delivered: 'Çatdırıldı',
-                    completed: 'Tamamlandı',
-                    cancelled: 'Ləğv edildi'
-                }[order.status] || order.status;
-                
-                const time = new Date(order.timestamp).toLocaleTimeString('az-AZ', {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
+                const statusText = { pending: 'Gözləyir', preparing: 'Hazırlanır', ready: 'Hazırdır', delivered: 'Çatdırıldı', completed: 'Tamamlandı', cancelled: 'Ləğv edildi' }[order.status] || order.status;
+                const time = new Date(order.timestamp).toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' });
+                const isTable = order.table || order.orderType === 'table';
                 
                 return `
                     <div class="order-card">
                         <div class="order-header">
                             <span class="order-id">#${order.id}</span>
-                            <span class="order-time">
-                                <i class="far fa-clock"></i> ${time}
-                            </span>
+                            <span class="order-time"><i class="far fa-clock"></i> ${time}</span>
                         </div>
                         
                         <div class="order-info">
                             <div class="order-info-item">
-                                <span class="order-info-label">Masa/Tip</span>
+                                <span class="order-info-label">Tip</span>
                                 <span class="order-info-value">
-                                    ${order.table ? `Masa ${order.table}` : 'Çatdırılma'}
+                                    <span class="order-type-badge ${isTable ? 'type-table' : 'type-delivery'}">
+                                        ${isTable ? `Masa ${order.table || '—'}` : 'Çatdırılma'}
+                                    </span>
                                 </span>
                             </div>
                             <div class="order-info-item">
                                 <span class="order-info-label">Müştəri</span>
-                                <span class="order-info-value">
-                                    ${order.customer?.name || 'Anonim'}
-                                    ${order.customer?.phone ? `<br><small>${order.customer.phone}</small>` : ''}
-                                </span>
+                                <span class="order-info-value">${order.customer?.name || 'Anonim'}</span>
                             </div>
-                            ${!order.table && order.address ? `
+                            ${!isTable && order.address ? `
                                 <div class="order-info-item">
                                     <span class="order-info-label">Ünvan</span>
-                                    <span class="order-info-value">${order.address}</span>
+                                    <span class="order-info-value">${order.address.substring(0, 30)}...</span>
                                 </div>
                             ` : ''}
                         </div>
@@ -889,41 +1052,34 @@ function getFilterName(filter) {
                             ${order.items.map(item => `
                                 <div class="order-item">
                                     <span>${item.quantity}x ${item.name}</span>
-                                   <span>${(item.price * item.quantity).toFixed(2)} ₼</span>
+                                    <span>${(item.price * item.quantity).toFixed(2)} ₼</span>
                                 </div>
                             `).join('')}
-                            ${order.note ? `
-                                <div class="order-item" style="color: var(--text-secondary); font-style: italic; margin-top: 8px;">
-                                    <i class="fas fa-pencil-alt"></i> ${order.note}
-                                </div>
-                            ` : ''}
                         </div>
                         
-                        <div class="order-total">
-                            Ümumi: ${order.total?.toFixed(2) || '0.00'} ₼
-                        </div>
+                        <div class="order-total">Ümumi: ${order.total?.toFixed(2) || '0.00'} ₼</div>
                         
                         <div class="order-actions">
                             <span class="status-badge ${statusClass}">${statusText}</span>
                             <select class="status-select" onchange="updateOrderStatus('${order.id}', this.value)">
-                                <option value="">Statusu dəyiş</option>
+                                <option value="">Status</option>
                                 <option value="pending">Gözləyir</option>
                                 <option value="preparing">Hazırlanır</option>
                                 <option value="ready">Hazırdır</option>
                                 <option value="delivered">Çatdırıldı</option>
                                 <option value="completed">Tamamlandı</option>
-                                <option value="cancelled">Ləğv et</option>
                             </select>
+                            <button class="delete-order-btn" onclick="deleteOrder('${order.id}')">
+                                <i class="fas fa-trash"></i> Sil
+                            </button>
                         </div>
                     </div>
                 `;
             }).join('');
         }
 
-        // Update statistics
         function updateStats() {
             const today = new Date().toISOString().split('T')[0];
-            
             document.getElementById('pendingCount').textContent = orders.filter(o => o.status === 'pending').length;
             document.getElementById('preparingCount').textContent = orders.filter(o => o.status === 'preparing').length;
             document.getElementById('readyCount').textContent = orders.filter(o => o.status === 'ready').length;
@@ -931,18 +1087,30 @@ function getFilterName(filter) {
             document.getElementById('totalOrders').textContent = orders.length;
         }
 
+        function showNotification(title, body, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = 'toast-message';
+            const icon = type === 'new-order' ? '🛎️' : type === 'success' ? '✅' : type === 'error' ? '❌' : '🔔';
+            
+            toast.innerHTML = `<div class="toast-icon">${icon}</div><div class="toast-content"><div class="toast-title">${title}</div><div class="toast-body">${body}</div></div>`;
+            toastContainer.appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
+        }
+
         // Global functions
         window.login = login;
         window.logout = logout;
         window.filterOrders = filterOrders;
         window.updateOrderStatus = updateOrderStatus;
+        window.deleteOrder = deleteOrder;
+        window.clearAllOrders = clearAllOrders;
+        window.changePeriod = changePeriod;
 
-        // Keyboard shortcut for login
         document.getElementById('secretInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') login();
         });
 
-        console.log('🍽️ İstanbul Kafe Admin Panel yükləndi');
+        console.log('🍽️ İstanbul Kafe Admin Panel - Yeni Versiya');
     </script>
 </body>
 </html>
