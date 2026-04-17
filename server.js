@@ -24,7 +24,14 @@ const connectedAdmins = new Set();
 const connectedClients = new Map();
 
 // Generate unique ID
-const generateId = () => `ORD-${Date.now()}-${crypto.randomBytes(4).toString('hex').toUpperCase()}`;
+const generateId = () => {
+    const date = new Date();
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `ORD-${day}${month}-${hours}${minutes}-${crypto.randomBytes(2).toString('hex').toUpperCase()}`;
+};
 
 // ============================================
 // WEBSOCKET SERVER
@@ -33,7 +40,7 @@ wss.on('connection', (ws, req) => {
     const clientIp = req.socket.remoteAddress;
     const clientId = crypto.randomBytes(8).toString('hex');
     
-    console.log(`🔗 Yeni bağlantı: ${clientId} (${clientIp})`);
+    console.log(`🔗 Yeni bağlantı: ${clientId}`);
     
     ws.clientId = clientId;
     ws.isAdmin = false;
@@ -64,7 +71,6 @@ wss.on('connection', (ws, req) => {
         console.error('❌ WebSocket xətası:', error);
     });
     
-    // Ping/Pong for keeping connection alive
     ws.isAlive = true;
     ws.on('pong', () => { ws.isAlive = true; });
 });
@@ -92,10 +98,11 @@ function handleWebSocketMessage(ws, data) {
                 ws.isAdmin = true;
                 connectedAdmins.add(ws);
                 
+                // Bütün sifarişləri göndər (son 100, ən yeni öndə)
                 ws.send(JSON.stringify({
                     type: 'ADMIN_REGISTERED',
                     message: 'Admin panelə qoşuldu',
-                    orders: orders.slice(-50) // Son 50 sifarişi göndər
+                    orders: orders.slice(-100).reverse()
                 }));
                 
                 console.log(`👑 Admin qeydiyyatdan keçdi. Aktiv admin: ${connectedAdmins.size}`);
@@ -149,11 +156,10 @@ function handleNewOrder(ws, orderData) {
     
     orders.push(order);
     
-    // Sifarişi saxla (production-da database-ə yaz)
     console.log(`📦 YENİ SİFARİŞ: ${orderId}`);
     console.log(`   Masa: ${order.table || 'Çatdırılma'}`);
     console.log(`   Müştəri: ${order.customer?.name || 'Anonim'}`);
-    console.log(`   Məbləğ: $${order.total?.toFixed(2) || '0.00'}`);
+    console.log(`   Məbləğ: ${order.total?.toFixed(2)} AZN`);
     console.log(`   Məhsul sayı: ${order.items?.length || 0}`);
     
     // Müştəriyə təsdiq göndər
@@ -170,7 +176,7 @@ function handleNewOrder(ws, orderData) {
         order,
         notification: {
             title: '🛎️ Yeni Sifariş!',
-            body: `${order.table ? `Masa ${order.table}` : 'Çatdırılma'} - ${order.customer?.name || 'Anonim'} - $${order.total?.toFixed(2)}`,
+            body: `${order.table ? `Masa ${order.table}` : 'Çatdırılma'} - ${order.customer?.name || 'Anonim'} - ${order.total?.toFixed(2)} AZN`,
             sound: true,
             priority: 'high'
         }
@@ -260,6 +266,18 @@ app.get('/api/health', (req, res) => {
     });
 });
 
+// Yeni sifariş yoxlama (səsli bildiriş üçün)
+app.get('/api/orders/check-new', (req, res) => {
+    const lastCheck = req.query.since ? new Date(req.query.since) : new Date(Date.now() - 10000);
+    const newOrders = orders.filter(o => new Date(o.timestamp) > lastCheck);
+    
+    res.json({
+        success: true,
+        newOrders: newOrders.length,
+        orders: newOrders
+    });
+});
+
 // Get all orders (admin only)
 app.get('/api/orders', (req, res) => {
     const { secret } = req.query;
@@ -278,7 +296,7 @@ app.get('/api/orders', (req, res) => {
     res.json({
         success: true,
         count: filteredOrders.length,
-        orders: filteredOrders.slice(-parseInt(limit))
+        orders: filteredOrders.slice(-parseInt(limit)).reverse()
     });
 });
 
@@ -316,7 +334,7 @@ app.post('/api/orders', (req, res) => {
         order,
         notification: {
             title: '🛎️ Yeni Sifariş (HTTP)',
-            body: `${order.table ? `Masa ${order.table}` : 'Çatdırılma'} - $${order.total?.toFixed(2)}`,
+            body: `${order.table ? `Masa ${order.table}` : 'Çatdırılma'} - ${order.total?.toFixed(2)} AZN`,
             sound: true
         }
     });
@@ -448,9 +466,9 @@ server.listen(PORT, () => {
 ║         Server başladı: http://localhost:${PORT}           ║
 ║         Admin panel: http://localhost:${PORT}/admin        ║
 ║         QR Kodlar: http://localhost:${PORT}/qrcodes        ║
+║         Menyu: http://localhost:${PORT}/menu               ║
 ║                                                          ║
-║         WebSocket: ws://localhost:${PORT}                  ║
-║         Admin Secret: ${process.env.ADMIN_SECRET}          ║
+║         Admin Secret: ${process.env.ADMIN_SECRET || '!!! QURULMAYIB !!!'}${' '.repeat(20)}║
 ║                                                          ║
 ╚══════════════════════════════════════════════════════════╝
     `);
