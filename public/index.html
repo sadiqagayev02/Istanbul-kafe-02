@@ -1768,6 +1768,7 @@
     let ws = null;
     let wsReconnectTimer = null;
     let audioContext = null;
+    let audioInitialized = false;
     let autoRefreshInterval = null;
     let lastOrderCheck = Date.now();
 
@@ -1816,15 +1817,34 @@
     }
 
     // ============================================
-    // SƏSLİ BİLDİRİŞ
+    // SƏSLİ BİLDİRİŞ (MOBİL DƏSTƏKLİ)
     // ============================================
     function initAudio() {
-        try { audioContext = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
+        try { 
+            audioContext = new (window.AudioContext || window.webkitAudioContext)(); 
+        } catch (e) {}
     }
     
-    function playNotificationSound() {
-        if (!audioContext) { initAudio(); if (!audioContext) return; }
-        if (audioContext.state === 'suspended') audioContext.resume();
+    function unlockAudio() {
+        if (audioInitialized) return;
+        
+        if (!audioContext) {
+            initAudio();
+        }
+        
+        if (audioContext && audioContext.state === 'suspended') {
+            audioContext.resume().then(() => {
+                console.log('🔊 Audio aktivləşdirildi');
+                audioInitialized = true;
+            }).catch(e => console.log('Audio aktivləşmədi:', e));
+        } else if (audioContext && audioContext.state === 'running') {
+            audioInitialized = true;
+        }
+    }
+    
+    function playWebAudioSound() {
+        if (!audioContext) return;
+        
         try {
             const now = audioContext.currentTime;
             const osc1 = audioContext.createOscillator();
@@ -1839,6 +1859,23 @@
             osc1.start(); osc2.start();
             osc1.stop(now + 0.4); osc2.stop(now + 0.4);
         } catch (e) {}
+    }
+    
+    function playNotificationSound() {
+        unlockAudio();
+        
+        if (!audioContext) {
+            initAudio();
+            if (!audioContext) return;
+        }
+        
+        if (audioContext.state === 'suspended') {
+            audioContext.resume().then(() => {
+                playWebAudioSound();
+            }).catch(() => {});
+        } else {
+            playWebAudioSound();
+        }
     }
 
     // ============================================
@@ -1875,6 +1912,12 @@
         }
         
         initAudio();
+        
+        // Mobil cihazlar üçün ilk toxunuşda audio-nu aktivləşdir
+        ['touchstart', 'click', 'scroll'].forEach(eventType => {
+            document.body.addEventListener(eventType, unlockAudio, { once: false, passive: true });
+        });
+        
         connectWebSocket();
         startAutoRefresh();
         
@@ -1942,15 +1985,15 @@
             const item = cart.find(it => it.id === p.id);
             const qty = item ? item.quantity : 0;
             const isFav = favorites.includes(p.id);
-            return `<div class="product-card" onclick="openProductModal(${p.id})" style="animation-delay: ${i*0.03}s">
+            return `<div class="product-card" onclick="unlockAudio(); openProductModal(${p.id})" style="animation-delay: ${i*0.03}s">
                 <div class="product-image"><img src="${p.image}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/400x300/36BEFF/FFFFFF?text=${encodeURIComponent(p.name)}'">
                     ${p.badge?`<span class="product-badge ${p.badgeType}">${p.badge}</span>`:''}
-                    <button class="favorite-btn ${isFav?'active':''}" onclick="event.stopPropagation();toggleFavorite(${p.id})"><i class="${isFav?'fas':'far'} fa-heart"></i></button>
+                    <button class="favorite-btn ${isFav?'active':''}" onclick="event.stopPropagation(); toggleFavorite(${p.id})"><i class="${isFav?'fas':'far'} fa-heart"></i></button>
                 </div>
                 <div class="product-info"><div class="product-name">${p.name}</div><div class="product-desc">${p.description}</div>
                     <div class="product-meta"><span class="product-time"><i class="far fa-clock"></i> ${p.time}</span></div>
                     <div class="product-footer"><div class="product-price">${p.price.toFixed(2)} ₼</div>
-                        ${qty>0?`<div class="quantity-control"><button class="quantity-btn" onclick="event.stopPropagation();updateCartQuantity(${p.id},-1)">−</button><span class="quantity-value">${qty}</span><button class="quantity-btn" onclick="event.stopPropagation();updateCartQuantity(${p.id},1)">+</button></div>`:`<button class="add-btn" onclick="event.stopPropagation();addToCart(${p.id})"><i class="fas fa-plus"></i></button>`}
+                        ${qty>0?`<div class="quantity-control"><button class="quantity-btn" onclick="event.stopPropagation(); updateCartQuantity(${p.id},-1)">−</button><span class="quantity-value">${qty}</span><button class="quantity-btn" onclick="event.stopPropagation(); updateCartQuantity(${p.id},1)">+</button></div>`:`<button class="add-btn" onclick="event.stopPropagation(); addToCart(${p.id})"><i class="fas fa-plus"></i></button>`}
                     </div>
                 </div>
             </div>`;
@@ -1963,6 +2006,7 @@
     // CART
     // ============================================
     function addToCart(id, qty=1) {
+        unlockAudio();
         const p = PRODUCTS.find(x=>x.id===id); if(!p) return;
         const ex = cart.find(x=>x.id===id);
         ex ? ex.quantity+=qty : cart.push({id:p.id, name:p.name, price:p.price, image:p.image, quantity:qty});
@@ -2064,7 +2108,7 @@
     window.toggleCart=toggleCart; window.openProductModal=openProductModal; window.closeModal=closeModal;
     window.updateModalQuantity=updateModalQuantity; window.addToCartFromModal=addToCartFromModal;
     window.openOrderPanel=openOrderPanel; window.closeOrderPanel=closeOrderPanel; window.proceedToCheckout=proceedToCheckout;
-    window.submitOrder=submitOrder; window.scrollToTop=scrollToTop;
+    window.submitOrder=submitOrder; window.scrollToTop=scrollToTop; window.unlockAudio=unlockAudio;
     console.log('🚀 İstanbul Kafe hazırdır!');
 </script>
 </body>
