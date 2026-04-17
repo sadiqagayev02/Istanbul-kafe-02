@@ -19,9 +19,12 @@ app.use(require('cors')());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // In-memory storage
-const orders = [];
+let orders = [];
 const connectedAdmins = new Set();
 const connectedClients = new Map();
+
+// Gəlir storage
+let dailyRevenue = {};
 
 // Generate unique ID
 const generateId = () => {
@@ -32,6 +35,32 @@ const generateId = () => {
     const minutes = String(date.getMinutes()).padStart(2, '0');
     return `ORD-${day}${month}-${hours}${minutes}-${crypto.randomBytes(2).toString('hex').toUpperCase()}`;
 };
+
+// ============================================
+// GƏLİR FUNKSİYALARI
+// ============================================
+function saveOrderToRevenue(order) {
+    const date = new Date(order.timestamp).toISOString().split('T')[0];
+    const hour = new Date(order.timestamp).getHours();
+    
+    // Yalnız 09:00-21:00 arası
+    if (hour < 9 || hour >= 21) return;
+    
+    if (!dailyRevenue[date]) {
+        dailyRevenue[date] = { total: 0, table: 0, delivery: 0, tableCount: 0, deliveryCount: 0 };
+    }
+    
+    dailyRevenue[date].total += order.total || 0;
+    if (order.orderType === 'table' || order.table) {
+        dailyRevenue[date].table += order.total || 0;
+        dailyRevenue[date].tableCount++;
+    } else {
+        dailyRevenue[date].delivery += order.total || 0;
+        dailyRevenue[date].deliveryCount++;
+    }
+    
+    console.log(`💰 Gəlir yeniləndi: ${date} - ${dailyRevenue[date].total.toFixed(2)} AZN`);
+}
 
 // ============================================
 // WEBSOCKET SERVER
@@ -98,11 +127,12 @@ function handleWebSocketMessage(ws, data) {
                 ws.isAdmin = true;
                 connectedAdmins.add(ws);
                 
-                // Bütün sifarişləri göndər (son 100, ən yeni öndə)
+                // Bütün sifarişləri və gəliri göndər
                 ws.send(JSON.stringify({
                     type: 'ADMIN_REGISTERED',
                     message: 'Admin panelə qoşuldu',
-                    orders: orders.slice(-100).reverse()
+                    orders: orders.slice(-100).reverse(),
+                    revenue: dailyRevenue
                 }));
                 
                 console.log(`👑 Admin qeydiyyatdan keçdi. Aktiv admin: ${connectedAdmins.size}`);
@@ -135,6 +165,14 @@ function handleWebSocketMessage(ws, data) {
             handleOrderStatusUpdate(ws, data);
             break;
             
+        case 'DELETE_ORDER':
+            handleDeleteOrder(ws, data);
+            break;
+            
+        case 'CLEAR_ORDERS':
+            handleClearOrders(ws, data);
+            break;
+            
         case 'PING':
             ws.send(JSON.stringify({ type: 'PONG', timestamp: Date.now() }));
             break;
@@ -155,6 +193,9 @@ function handleNewOrder(ws, orderData) {
     };
     
     orders.push(order);
+    
+    // Gəliri yadda saxla
+    saveOrderToRevenue(order);
     
     console.log(`📦 YENİ SİFARİŞ: ${orderId}`);
     console.log(`   Masa: ${order.table || 'Çatdırılma'}`);
@@ -180,6 +221,12 @@ function handleNewOrder(ws, orderData) {
             sound: true,
             priority: 'high'
         }
+    });
+    
+    // Gəlir yenilənməsini adminlərə göndər
+    broadcastToAdmins({
+        type: 'REVENUE_UPDATED',
+        revenue: dailyRevenue
     });
 }
 
@@ -222,6 +269,63 @@ function handleOrderStatusUpdate(ws, data) {
     broadcastToAdmins({
         type: 'ORDER_UPDATED',
         order
+    });
+}
+
+// Handle Delete Order
+function handleDeleteOrder(ws, data) {
+    // Admin yoxlaması
+    const isAdminBySecret = data.secret === process.env.ADMIN_SECRET;
+    if (!ws.isAdmin && !isAdminBySecret) {
+        ws.send(JSON.stringify({
+            type: 'ERROR',
+            message: 'Bu əməliyyat üçün admin hüququ lazımdır'
+        }));
+        return;
+    }
+    
+    const orderId = data.orderId;
+    const orderExists = orders.find(o => o.id === orderId);
+    
+    if (!orderExists) {
+        ws.send(JSON.stringify({
+            type: 'ERROR',
+            message: 'Sifariş tapılmadı'
+        }));
+        return;
+    }
+    
+    orders = orders.filter(o => o.id !== orderId);
+    
+    console.log(`🗑️ Sifariş silindi: ${orderId}`);
+    
+    // Bütün adminlərə bildir
+    broadcastToAdmins({
+        type: 'ORDER_DELETED',
+        orderId: orderId
+    });
+}
+
+// Handle Clear All Orders
+function handleClearOrders(ws, data) {
+    const isAdminBySecret = data.secret === process.env.ADMIN_SECRET;
+    if (!ws.isAdmin && !isAdminBySecret) {
+        ws.send(JSON.stringify({
+            type: 'ERROR',
+            message: 'Bu əməliyyat üçün admin hüququ lazımdır'
+        }));
+        return;
+    }
+    
+    const deletedCount = orders.length;
+    orders = [];
+    
+    console.log(`🗑️ BÜTÜN SİFARİŞLƏR SİLİNDİ (${deletedCount} ədəd)`);
+    
+    // Bütün adminlərə bildir
+    broadcastToAdmins({
+        type: 'ORDERS_CLEARED',
+        count: deletedCount
     });
 }
 
@@ -325,6 +429,7 @@ app.post('/api/orders', (req, res) => {
     };
     
     orders.push(order);
+    saveOrderToRevenue(order);
     
     console.log(`📦 HTTP Sifariş: ${orderId}`);
     
@@ -337,6 +442,11 @@ app.post('/api/orders', (req, res) => {
             body: `${order.table ? `Masa ${order.table}` : 'Çatdırılma'} - ${order.total?.toFixed(2)} AZN`,
             sound: true
         }
+    });
+    
+    broadcastToAdmins({
+        type: 'REVENUE_UPDATED',
+        revenue: dailyRevenue
     });
     
     res.json({
@@ -370,6 +480,63 @@ app.patch('/api/orders/:orderId', (req, res) => {
     });
     
     res.json({ success: true, order });
+});
+
+// Delete order (admin only)
+app.delete('/api/orders/:orderId', (req, res) => {
+    const { orderId } = req.params;
+    const { secret } = req.body;
+    
+    if (secret !== process.env.ADMIN_SECRET) {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
+    
+    const orderExists = orders.find(o => o.id === orderId);
+    if (!orderExists) {
+        return res.status(404).json({ error: 'Sifariş tapılmadı' });
+    }
+    
+    orders = orders.filter(o => o.id !== orderId);
+    
+    broadcastToAdmins({
+        type: 'ORDER_DELETED',
+        orderId
+    });
+    
+    res.json({ success: true, message: 'Sifariş silindi' });
+});
+
+// Clear all orders (admin only)
+app.delete('/api/orders', (req, res) => {
+    const { secret } = req.body;
+    
+    if (secret !== process.env.ADMIN_SECRET) {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
+    
+    const deletedCount = orders.length;
+    orders = [];
+    
+    broadcastToAdmins({
+        type: 'ORDERS_CLEARED',
+        count: deletedCount
+    });
+    
+    res.json({ success: true, message: `${deletedCount} sifariş silindi` });
+});
+
+// Get revenue (admin only)
+app.get('/api/revenue', (req, res) => {
+    const { secret } = req.query;
+    
+    if (secret !== process.env.ADMIN_SECRET) {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
+    
+    res.json({
+        success: true,
+        revenue: dailyRevenue
+    });
 });
 
 // Get statistics (admin only)
@@ -438,7 +605,8 @@ app.get('/qrcodes', (req, res) => {
 });
 
 app.get('/menu', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'menu.html'));
+    const table = req.query.table || '1';
+    res.redirect(`/?table=${table}`);
 });
 
 // 404 handler
