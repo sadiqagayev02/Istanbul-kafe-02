@@ -1,0 +1,2383 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#FF6B35">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>İstanbul Kafe | Premium Menyu</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+       /* ============================================
+   PREMIUM LIGHT THEME - İSTANBUL KAFE (MAVİ TON)
+   ============================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary: #36BEFF;
+    --primary-dark: #1AA0E0;
+    --primary-light: #E6F7FF;
+    --secondary: #2C3E50;
+    --accent: #5CC8FF;
+    --success: #27AE60;
+    --warning: #F39C12;
+    --danger: #E74C3C;
+    
+    --bg-primary: #FAFEFF;
+    --bg-secondary: #FFFFFF;
+    --bg-card: #FFFFFF;
+    --bg-glass: rgba(255, 255, 255, 0.95);
+    
+    --text-primary: #1A1A1A;
+    --text-secondary: #4A4A4A;
+    --text-muted: #8A8A8A;
+    --text-light: #B0B0B0;
+    
+    --border-light: rgba(54, 190, 255, 0.15);
+    --border-medium: rgba(54, 190, 255, 0.25);
+    --border-strong: rgba(54, 190, 255, 0.4);
+    
+    --shadow-sm: 0 2px 8px rgba(54, 190, 255, 0.08);
+    --shadow-md: 0 8px 24px rgba(54, 190, 255, 0.12);
+    --shadow-lg: 0 16px 40px rgba(54, 190, 255, 0.16);
+    --shadow-xl: 0 24px 60px rgba(54, 190, 255, 0.2);
+    
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-2xl: 32px;
+    --radius-full: 9999px;
+    
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: linear-gradient(135deg, #36BEFF 0%, #FAFEFF 100%);
+    color: var(--text-primary);
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 0% 0%, rgba(54, 190, 255, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 100% 100%, rgba(92, 200, 255, 0.06) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(44, 62, 80, 0.02) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: -1;
+    animation: bgPulse 15s ease-in-out infinite alternate;
+}
+
+@keyframes bgPulse {
+    0% { opacity: 0.5; transform: scale(1); }
+    100% { opacity: 1; transform: scale(1.05); }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(54, 190, 255, 0.1);
+    border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border-radius: var(--radius-full);
+}
+
+/* ============================================
+   SPLASH SCREEN
+   ============================================ */
+#splash {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: linear-gradient(135deg, #36BEFF 0%, #FAFEFF 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.6s, visibility 0.6s;
+}
+
+#splash.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.splash-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -1px;
+    text-align: center;
+}
+
+.splash-sub {
+    color: var(--text-muted);
+    font-size: 1rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-top: 8px;
+}
+
+.splash-loader {
+    margin-top: 40px;
+    width: 48px;
+    height: 48px;
+    border: 3px solid var(--border-light);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(20px) saturate(180%);
+    background: var(--bg-glass);
+    border-bottom: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+    padding: 12px 20px;
+}
+
+.header-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 20px rgba(54, 190, 255, 0.25);
+    position: relative;
+    overflow: hidden;
+}
+
+.logo-icon::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+    transform: rotate(45deg);
+    animation: logoShine 3s infinite;
+}
+
+@keyframes logoShine {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+.logo-icon i {
+    font-size: 24px;
+    color: white;
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.logo-title {
+    font-size: 24px;
+    font-weight: 800;
+    font-family: 'Playfair Display', serif;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.logo-subtitle {
+    font-size: 11px;
+    color: var(--primary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.table-badge {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 8px 16px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(54, 190, 255, 0.3);
+}
+
+.table-badge i {
+    font-size: 16px;
+}
+
+.cart-btn {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    background: var(--primary-light);
+    border: 1px solid var(--border-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.cart-btn:hover {
+    background: var(--primary);
+    transform: scale(1.05);
+}
+
+.cart-btn:hover i {
+    color: white;
+}
+
+.cart-btn i {
+    font-size: 22px;
+    color: var(--primary);
+    transition: var(--transition);
+}
+
+.cart-count {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: var(--danger);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    min-width: 20px;
+    height: 20px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.4);
+}
+
+/* ============================================
+   HERO BANNER
+   ============================================ */
+.hero-banner {
+    margin: 20px;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    position: relative;
+    box-shadow: var(--shadow-lg);
+}
+
+.hero-slider {
+    position: relative;
+    height: 220px;
+}
+
+.hero-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+}
+
+.hero-slide.active {
+    opacity: 1;
+}
+
+.hero-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+}
+
+.hero-content {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    color: white;
+}
+
+.hero-badge {
+    display: inline-block;
+    background: var(--primary);
+    color: white;
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.hero-subtitle {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.hero-dots {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    display: flex;
+    gap: 6px;
+}
+
+.hero-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.4);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.hero-dot.active {
+    background: var(--primary);
+    width: 24px;
+    border-radius: 4px;
+}
+
+/* ============================================
+   SEARCH BAR
+   ============================================ */
+.search-section {
+    padding: 0 20px 16px;
+}
+
+.search-wrapper {
+    position: relative;
+}
+
+.search-wrapper i {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 18px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 14px 16px 14px 48px;
+    background: var(--bg-card);
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius-full);
+    font-size: 15px;
+    color: var(--text-primary);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(54, 190, 255, 0.1);
+}
+
+.search-input::placeholder {
+    color: var(--text-light);
+}
+
+/* ============================================
+   CATEGORY TABS
+   ============================================ */
+.categories-wrapper {
+    padding: 0 20px 20px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.categories-wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+.categories {
+    display: flex;
+    gap: 8px;
+}
+
+.category-tab {
+    flex-shrink: 0;
+    padding: 10px 20px;
+    background: var(--bg-card);
+    border: 1.5px solid var(--border-light);
+    border-radius: var(--radius-full);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    box-shadow: var(--shadow-sm);
+}
+
+.category-tab i {
+    color: var(--primary);
+    font-size: 16px;
+}
+
+.category-tab:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.category-tab.active {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    border-color: var(--primary);
+    box-shadow: 0 8px 20px rgba(54, 190, 255, 0.25);
+}
+
+.category-tab.active i {
+    color: white;
+}
+
+/* ============================================
+   SECTION TITLE
+   ============================================ */
+.section-header {
+    padding: 0 20px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-title i {
+    color: var(--primary);
+    font-size: 24px;
+}
+
+.item-count {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 500;
+}
+
+/* ============================================
+   PRODUCT GRID
+   ============================================ */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    padding: 0 20px 100px;
+}
+
+.product-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    border: 1px solid var(--border-light);
+    cursor: pointer;
+    animation: cardAppear 0.5s ease-out forwards;
+    opacity: 0;
+}
+
+@keyframes cardAppear {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--border-medium);
+}
+
+.product-image {
+    position: relative;
+    height: 150px;
+    overflow: hidden;
+}
+
+.product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.product-card:hover .product-image img {
+    transform: scale(1.08);
+}
+
+.product-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 4px 10px;
+    background: var(--danger);
+    color: white;
+    border-radius: var(--radius-full);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.product-badge.new {
+    background: var(--success);
+}
+
+.product-badge.popular {
+    background: var(--warning);
+}
+
+.favorite-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+    border: none;
+}
+
+.favorite-btn:hover {
+    transform: scale(1.1);
+}
+
+.favorite-btn i {
+    font-size: 16px;
+    color: var(--text-muted);
+    transition: var(--transition);
+}
+
+.favorite-btn.active i {
+    color: var(--danger);
+}
+
+.product-info {
+    padding: 14px;
+}
+
+.product-name {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    line-height: 1.3;
+}
+
+.product-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.product-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.product-time {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.product-time i {
+    color: var(--primary);
+    font-size: 12px;
+}
+
+.product-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.product-price {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--primary);
+    font-family: 'Playfair Display', serif;
+}
+
+.product-price small {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.add-btn {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 4px 12px rgba(54, 190, 255, 0.25);
+}
+
+.add-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(54, 190, 255, 0.35);
+}
+
+.quantity-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--primary-light);
+    padding: 4px;
+    border-radius: var(--radius-full);
+}
+
+.quantity-btn {
+    width: 28px;
+    height: 28px;
+    background: white;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: var(--primary);
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+}
+
+.quantity-btn:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.quantity-value {
+    font-weight: 700;
+    color: var(--text-primary);
+    min-width: 20px;
+    text-align: center;
+}
+
+/* ============================================
+   PRODUCT MODAL
+   ============================================ */
+.modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: flex-end;
+    visibility: hidden;
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.modal.open {
+    visibility: visible;
+    opacity: 1;
+}
+
+.modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    position: relative;
+    background: var(--bg-card);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal.open .modal-content {
+    transform: translateY(0);
+}
+
+.modal-header {
+    position: relative;
+    height: 250px;
+}
+
+.modal-header img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 40px;
+    height: 40px;
+    background: white;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--shadow-md);
+}
+
+.modal-close:hover {
+    transform: rotate(90deg);
+    background: var(--danger);
+    color: white;
+}
+
+.modal-body {
+    padding: 24px;
+}
+
+.modal-category {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--primary);
+    margin-bottom: 8px;
+}
+
+.modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+    line-height: 1.2;
+}
+
+.modal-meta {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.modal-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.modal-meta-item i {
+    color: var(--primary);
+}
+
+.modal-description {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 20px;
+}
+
+.modal-ingredients {
+    margin-bottom: 24px;
+}
+
+.modal-ingredients h4 {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+}
+
+.ingredients-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.ingredient-tag {
+    padding: 6px 14px;
+    background: var(--primary-light);
+    border-radius: var(--radius-full);
+    font-size: 13px;
+    color: var(--primary-dark);
+    font-weight: 500;
+}
+
+.modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-top: 1px solid var(--border-light);
+    background: var(--bg-card);
+    position: sticky;
+    bottom: 0;
+}
+
+.modal-price {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--primary);
+}
+
+.modal-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.modal-quantity {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.modal-quantity button {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border-medium);
+    background: white;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.modal-quantity button:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.modal-quantity span {
+    font-size: 18px;
+    font-weight: 700;
+    min-width: 24px;
+    text-align: center;
+}
+
+.modal-add-btn {
+    padding: 14px 28px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    border: none;
+    border-radius: var(--radius-full);
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 8px 20px rgba(54, 190, 255, 0.25);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.modal-add-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(54, 190, 255, 0.35);
+}
+
+/* ============================================
+   CART PANEL
+   ============================================ */
+.cart-panel {
+    position: fixed;
+    inset: 0;
+    z-index: 900;
+    display: flex;
+    align-items: flex-end;
+    visibility: hidden;
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.cart-panel.open {
+    visibility: visible;
+    opacity: 1;
+}
+
+.cart-content {
+    position: relative;
+    background: var(--bg-card);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    width: 100%;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cart-panel.open .cart-content {
+    transform: translateY(0);
+}
+
+.cart-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.cart-header h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cart-close {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--primary-light);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.cart-close:hover {
+    background: var(--danger);
+    color: white;
+    transform: rotate(90deg);
+}
+
+.cart-items {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 24px;
+}
+
+.cart-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+}
+
+.cart-empty i {
+    font-size: 64px;
+    color: var(--border-medium);
+    margin-bottom: 16px;
+}
+
+.cart-item {
+    display: flex;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.cart-item-image {
+    width: 70px;
+    height: 70px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.cart-item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.cart-item-info {
+    flex: 1;
+}
+
+.cart-item-name {
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.cart-item-price {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.cart-item-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cart-footer {
+    padding: 20px 24px;
+    border-top: 1px solid var(--border-light);
+    background: var(--bg-card);
+}
+
+.cart-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.cart-total-amount {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    color: var(--primary);
+}
+
+.checkout-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    border: none;
+    border-radius: var(--radius-full);
+    font-weight: 700;
+    font-size: 18px;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 8px 20px rgba(54, 190, 255, 0.25);
+}
+
+.checkout-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(54, 190, 255, 0.35);
+}
+
+/* ============================================
+   ORDER PANEL
+   ============================================ */
+.order-panel {
+    position: fixed;
+    inset: 0;
+    z-index: 950;
+    display: flex;
+    align-items: flex-end;
+    visibility: hidden;
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.order-panel.open {
+    visibility: visible;
+    opacity: 1;
+}
+
+.order-content {
+    position: relative;
+    background: var(--bg-card);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    width: 100%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.order-panel.open .order-content {
+    transform: translateY(0);
+}
+
+.order-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.order-header h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+}
+
+.order-close {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--primary-light);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.order-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+}
+
+.table-info-card {
+    background: linear-gradient(135deg, var(--primary-light), #E6F7FF);
+    border: 1.5px solid var(--border-medium);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.table-info-icon {
+    width: 60px;
+    height: 60px;
+    background: white;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-sm);
+}
+
+.table-info-icon i {
+    font-size: 32px;
+    color: var(--primary);
+}
+
+.table-info-text h4 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 4px;
+}
+
+.table-info-text p {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.form-label .optional {
+    color: var(--text-muted);
+    font-weight: 400;
+    font-size: 12px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 14px 16px;
+    background: var(--bg-primary);
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius-md);
+    font-size: 15px;
+    color: var(--text-primary);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: var(--transition);
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(54, 190, 255, 0.1);
+}
+
+textarea.form-input {
+    resize: none;
+    min-height: 80px;
+}
+
+.order-summary {
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    margin: 20px 0;
+}
+
+.order-summary h4 {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 14px;
+}
+
+.summary-total {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 12px;
+    margin-top: 8px;
+    border-top: 2px solid var(--border-medium);
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.submit-order-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    border: none;
+    border-radius: var(--radius-full);
+    font-weight: 700;
+    font-size: 18px;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 8px 20px rgba(54, 190, 255, 0.25);
+    margin-top: 20px;
+}
+
+/* ============================================
+   TOAST NOTIFICATION
+   ============================================ */
+.toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100px);
+    z-index: 9999;
+    background: white;
+    color: var(--text-primary);
+    padding: 14px 24px;
+    border-radius: var(--radius-full);
+    font-weight: 600;
+    font-size: 14px;
+    opacity: 0;
+    transition: var(--transition);
+    box-shadow: var(--shadow-xl);
+    border-left: 4px solid var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    white-space: nowrap;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.toast i {
+    color: var(--primary);
+    font-size: 18px;
+}
+
+/* ============================================
+   EMPTY STATE
+   ============================================ */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+    grid-column: 1 / -1;
+}
+
+.empty-state i {
+    font-size: 64px;
+    color: var(--border-medium);
+    margin-bottom: 16px;
+}
+
+/* ============================================
+   BOTTOM NAVIGATION
+   ============================================ */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-glass);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 8px 20px 12px;
+    z-index: 100;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: var(--transition);
+    padding: 8px 16px;
+    border-radius: var(--radius-full);
+}
+
+.nav-item:hover {
+    background: var(--primary-light);
+}
+
+.nav-item i {
+    font-size: 22px;
+    color: var(--text-muted);
+    transition: var(--transition);
+}
+
+.nav-item span {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    transition: var(--transition);
+}
+
+.nav-item.active i,
+.nav-item.active span {
+    color: var(--primary);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (min-width: 768px) {
+    .products-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .products-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .logo-title {
+        font-size: 20px;
+    }
+    
+    .table-badge {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+}
+    </style>
+</head>
+<body>
+    <!-- Splash Screen -->
+    <div id="splash">
+        <div class="splash-logo">İstanbul Kafe</div>
+        <div class="splash-sub">Premium Menyu</div>
+        <div class="splash-loader"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-wrapper">
+                <div class="logo-icon">
+                    <i class="fas fa-utensils"></i>
+                </div>
+                <div class="logo-text">
+                    <span class="logo-title">İstanbul Kafe</span>
+                    <span class="logo-subtitle">Ən Ləzzətli Dönər</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <div class="table-badge" id="tableBadge" style="display: none;">
+                    <i class="fas fa-chair"></i>
+                    <span id="tableNumber">Masa 1</span>
+                </div>
+                <div class="cart-btn" onclick="toggleCart()">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span class="cart-count" id="cartCount">0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+        <div class="hero-slider">
+            <div class="hero-slide active">
+                <img src="https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=800" alt="Dönər" onerror="this.src='https://via.placeholder.com/800x400/FF6B35/FFFFFF?text=LIMUZIN+DONER'">
+                <div class="hero-overlay"></div>
+                <div class="hero-content">
+                    <span class="hero-badge">Ən Çox Sifariş</span>
+                    <div class="hero-title">Limuzin Dönər</div>
+                    <div class="hero-subtitle">Böyük porsiya, bol ət və tərəvəz</div>
+                </div>
+            </div>
+            <div class="hero-slide">
+                <img src="https://images.unsplash.com/photo-1547592166-23ac45744acd?w=800" alt="Mərci" onerror="this.src='https://via.placeholder.com/800x400/E85A2C/FFFFFF?text=MERCI+SORBASI'">
+                <div class="hero-overlay"></div>
+                <div class="hero-content">
+                    <span class="hero-badge">Ev Yeməyi</span>
+                    <div class="hero-title">Mərci Şorbası</div>
+                    <div class="hero-subtitle">Ənənəvi qırmızı mərci şorbası</div>
+                </div>
+            </div>
+            <div class="hero-slide">
+                <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=800" alt="Ətli Qızartma" onerror="this.src='https://via.placeholder.com/800x400/F4A261/FFFFFF?text=ETLI+QIZARTMA'">
+                <div class="hero-overlay"></div>
+                <div class="hero-content">
+                    <span class="hero-badge">Şef Tövsiyəsi</span>
+                    <div class="hero-title">Ətli Qızartma</div>
+                    <div class="hero-subtitle">Xüsusi ədviyyatlarla qızardılmış ət</div>
+                </div>
+            </div>
+            <div class="hero-dots">
+                <div class="hero-dot active" onclick="goToSlide(0)"></div>
+                <div class="hero-dot" onclick="goToSlide(1)"></div>
+                <div class="hero-dot" onclick="goToSlide(2)"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search -->
+    <div class="search-section">
+        <div class="search-wrapper">
+            <i class="fas fa-search"></i>
+            <input type="text" class="search-input" id="searchInput" placeholder="Yemək, içki və ya kateqoriya axtar..." oninput="filterProducts()">
+        </div>
+    </div>
+
+    <!-- Categories -->
+    <div class="categories-wrapper">
+        <div class="categories" id="categoriesContainer"></div>
+    </div>
+
+    <!-- Products Section -->
+    <div class="section-header">
+        <div class="section-title">
+            <i class="fas fa-utensils"></i>
+            <span id="sectionTitle">Bütün Məhsullar</span>
+        </div>
+        <span class="item-count" id="itemCount">16 məhsul</span>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="products-grid" id="productsGrid"></div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="scrollToTop()">
+            <i class="fas fa-home"></i>
+            <span>Ana Səhifə</span>
+        </div>
+        <div class="nav-item" onclick="filterByCategory('all')">
+            <i class="fas fa-list"></i>
+            <span>Menyu</span>
+        </div>
+        <div class="nav-item" onclick="toggleCart()">
+            <i class="fas fa-shopping-cart"></i>
+            <span>Səbət</span>
+        </div>
+        <div class="nav-item" onclick="openOrderPanel()">
+            <i class="fas fa-clipboard-list"></i>
+            <span>Sifariş</span>
+        </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div class="modal" id="productModal">
+        <div class="modal-backdrop" onclick="closeModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <img id="modalImage" src="" alt="">
+                <button class="modal-close" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-category" id="modalCategory"></div>
+                <div class="modal-title" id="modalTitle"></div>
+                <div class="modal-meta">
+                    <div class="modal-meta-item">
+                        <i class="far fa-clock"></i>
+                        <span id="modalTime"></span>
+                    </div>
+                    <div class="modal-meta-item">
+                        <i class="fas fa-fire"></i>
+                        <span id="modalCalories"></span>
+                    </div>
+                </div>
+                <div class="modal-description" id="modalDescription"></div>
+                <div class="modal-ingredients">
+                    <h4>Tərkibi</h4>
+                    <div class="ingredients-list" id="modalIngredients"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="modal-price" id="modalPrice">— ₼</div>
+                <div class="modal-actions">
+                    <div class="modal-quantity">
+                        <button onclick="updateModalQuantity(-1)">−</button>
+                        <span id="modalQuantity">1</span>
+                        <button onclick="updateModalQuantity(1)">+</button>
+                    </div>
+                    <button class="modal-add-btn" id="modalAddBtn" onclick="addToCartFromModal()">
+                        <i class="fas fa-plus"></i>
+                        Əlavə Et
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Panel -->
+    <div class="cart-panel" id="cartPanel">
+        <div class="modal-backdrop" onclick="toggleCart()"></div>
+        <div class="cart-content">
+            <div class="cart-header">
+                <h3>
+                    <i class="fas fa-shopping-bag"></i>
+                    Səbətiniz
+                </h3>
+                <button class="cart-close" onclick="toggleCart()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="cart-items" id="cartItems"></div>
+            <div class="cart-footer">
+                <div class="cart-total">
+                    <span>Ümumi:</span>
+                    <span class="cart-total-amount" id="cartTotal">0 ₼</span>
+                </div>
+                <button class="checkout-btn" onclick="proceedToCheckout()">
+                    <i class="fas fa-check-circle"></i>
+                    Sifarişi Tamamla
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Panel -->
+    <div class="order-panel" id="orderPanel">
+        <div class="modal-backdrop" onclick="closeOrderPanel()"></div>
+        <div class="order-content">
+            <div class="order-header">
+                <h3>
+                    <i class="fas fa-clipboard-list"></i>
+                    Sifariş Məlumatları
+                </h3>
+                <button class="order-close" onclick="closeOrderPanel()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="order-body" id="orderBody"></div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Sifariş qəbul edildi!</span>
+    </div>
+
+    <script>
+        // ============================================
+        // DATA
+        // ============================================
+        const PRODUCTS = [
+            // DÖNƏR ÇEŞİDLƏRİ
+            { id: 1, name: 'Sadə Dönər', category: 'doner', categoryName: 'Dönər Çeşidləri',
+              description: 'Klassik dönər, təzə tərəvəzlər və xüsusi sous ilə',
+              image: 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=400',
+              price: 6.50, time: '15 dəq', calories: '520 kkal',
+              ingredients: ['Lavaş', 'Döner əti', 'Pomidor', 'Xiyar', 'Soğan', 'Xüsusi sous'],
+              badge: 'Populyar', badgeType: 'popular' },
+              
+            { id: 2, name: 'Limuzin (Böyük) Dönər', category: 'doner', categoryName: 'Dönər Çeşidləri',
+              description: 'Böyük porsiya dönər, bol ət və tərəvəz ilə',
+              image: 'https://images.unsplash.com/photo-1617196034796-73dfa7b1fd56?w=400',
+              price: 12.00, time: '20 dəq', calories: '980 kkal',
+              ingredients: ['Böyük Lavaş', 'Döner əti (2x)', 'Pomidor', 'Xiyar', 'Sarımsaq sous'],
+              badge: 'Premium', badgeType: '' },
+              
+            { id: 3, name: 'Lavaşda Dönər', category: 'doner', categoryName: 'Dönər Çeşidləri',
+              description: 'İncə lavaşda bükülmüş dönər, kartof fri ilə',
+              image: 'https://images.unsplash.com/photo-1561758033-d89a9ad46330?w=400',
+              price: 7.50, time: '15 dəq', calories: '580 kkal',
+              ingredients: ['Nazik Lavaş', 'Döner əti', 'Pomidor', 'Kartof fri', 'Sous'],
+              badge: 'Yeni', badgeType: 'new' },
+              
+            { id: 4, name: 'Boşqabda Dönər', category: 'doner', categoryName: 'Dönər Çeşidləri',
+              description: 'Boşqabda servis edilən dönər, düyü və tərəvəz ilə',
+              image: 'https://images.unsplash.com/photo-1562967914-608f82629710?w=400',
+              price: 9.00, time: '25 dəq', calories: '490 kkal',
+              ingredients: ['Döner əti', 'Düyü', 'Pomidor', 'Xiyar', 'Soğan', 'Limon'],
+              badge: 'Şef Tövsiyəsi', badgeType: '' },
+              
+            // BOŞQAB YEMƏKLƏRİ
+            { id: 5, name: 'Mərci Yarım Pors', category: 'plate', categoryName: 'Boşqab Yeməkləri',
+              description: 'Ənənəvi mərci şorbası, yarım porsiya',
+              image: 'https://images.unsplash.com/photo-1547928576-b821bc10dfb3?w=400',
+              price: 5.00, time: '10 dəq', calories: '180 kkal',
+              ingredients: ['Qırmızı mərci', 'Soğan', 'Yerkökü', 'Limon', 'Kərə yağı'],
+              badge: '', badgeType: '' },
+              
+            { id: 6, name: 'Mərci Böyük Pors', category: 'plate', categoryName: 'Boşqab Yeməkləri',
+              description: 'Ənənəvi mərci şorbası, böyük porsiya',
+              image: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400',
+              price: 8.00, time: '10 dəq', calories: '360 kkal',
+              ingredients: ['Qırmızı mərci', 'Soğan', 'Yerkökü', 'Limon', 'Kərə yağı'],
+              badge: '', badgeType: '' },
+              
+            { id: 7, name: 'Qazan Kotleti', category: 'plate', categoryName: 'Boşqab Yeməkləri',
+              description: 'Ev üslubunda hazırlanan ətli kotlet',
+              image: 'https://images.unsplash.com/photo-1600891964092-4316c288032e?w=400',
+              price: 10.00, time: '30 dəq', calories: '620 kkal',
+              ingredients: ['Mal əti', 'Soğan', 'Sarımsaq', 'Yumurta', 'Baharatlar'],
+              badge: 'Populyar', badgeType: 'popular' },
+              
+            { id: 8, name: 'Aş Qarabaşaq (Qreçka)', category: 'plate', categoryName: 'Boşqab Yeməkləri',
+              description: 'Sağlam qarabaşaq yarması, tərəvəz ilə',
+              image: 'https://images.unsplash.com/photo-1589302168068-964664d4588e?w=400',
+              price: 7.00, time: '20 dəq', calories: '340 kkal',
+              ingredients: ['Qarabaşaq', 'Kərə yağı', 'Soğan', 'Göyərti'],
+              badge: 'Sağlam', badgeType: 'new' },
+              
+            { id: 9, name: 'Ətli Qızartma', category: 'plate', categoryName: 'Boşqab Yeməkləri',
+              description: 'Xüsusi ədviyyatlarla qızardılmış ət və tərəvəz',
+              image: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=400',
+              price: 13.00, time: '35 dəq', calories: '780 kkal',
+              ingredients: ['Dana əti', 'Bibər', 'Pomidor', 'Soğan', 'Zeytun yağı'],
+              badge: 'Premium', badgeType: '' },
+              
+            // İÇKİLƏR
+            { id: 10, name: 'Coca Cola', category: 'drink', categoryName: 'İçkilər',
+              description: 'Soyuq Coca Cola, 330ml',
+              image: 'https://images.unsplash.com/photo-1625772452859-1c03d884dbd7?w=400',
+              price: 2.00, time: 'Hazır', calories: '139 kkal',
+              ingredients: ['Qazlı su', 'Şəkər', 'Karamel', 'Kofein'],
+              badge: '', badgeType: '' },
+              
+            { id: 11, name: 'Fanta', category: 'drink', categoryName: 'İçkilər',
+              description: 'Portağal dadlı Fanta, 330ml',
+              image: 'https://images.unsplash.com/photo-1561758033-d89a9ad46330?w=400',
+              price: 2.00, time: 'Hazır', calories: '158 kkal',
+              ingredients: ['Qazlı su', 'Portağal suyu', 'Şəkər'],
+              badge: '', badgeType: '' },
+              
+            { id: 12, name: 'Sprite', category: 'drink', categoryName: 'İçkilər',
+              description: 'Limon dadlı Sprite, 330ml',
+              image: 'https://images.unsplash.com/photo-1632833239869-a37e3a5806d2?w=400',
+              price: 2.00, time: 'Hazır', calories: '132 kkal',
+              ingredients: ['Qazlı su', 'Limon turşusu', 'Şəkər'],
+              badge: '', badgeType: '' },
+              
+            { id: 13, name: 'Ayran', category: 'drink', categoryName: 'İçkilər',
+              description: 'Ev üsulu hazırlanan soyuq ayran',
+              image: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=400',
+              price: 1.50, time: 'Hazır', calories: '65 kkal',
+              ingredients: ['Yoğurt', 'Su', 'Duz'],
+              badge: 'Sağlam', badgeType: 'new' },
+              
+            // ƏLAVƏLƏR
+            { id: 14, name: 'Kartof Fri', category: 'extra', categoryName: 'Əlavələr',
+              description: 'Qızardılmış kartof, ketçap və mayonez ilə',
+              image: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400',
+              price: 3.00, time: '10 dəq', calories: '365 kkal',
+              ingredients: ['Kartof', 'Bitki yağı', 'Duz'],
+              badge: '', badgeType: '' },
+              
+            { id: 15, name: 'Sous Dəsti', category: 'extra', categoryName: 'Əlavələr',
+              description: 'Ketçap, mayonez, acı sous, sarımsaqlı sous',
+              image: 'https://images.unsplash.com/photo-1472476443507-c7a5948772fc?w=400',
+              price: 2.50, time: 'Hazır', calories: '—',
+              ingredients: ['Ketçap', 'Mayonez', 'Acı sous', 'Sarımsaqlı sous'],
+              badge: '', badgeType: '' },
+              
+            { id: 16, name: 'Tərəvəz Salatı', category: 'extra', categoryName: 'Əlavələr',
+              description: 'Təzə tərəvəzlərdən hazırlanmış salat',
+              image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400',
+              price: 4.00, time: '5 dəq', calories: '120 kkal',
+              ingredients: ['Pomidor', 'Xiyar', 'Kahı', 'Zeytun yağı', 'Limon'],
+              badge: 'Sağlam', badgeType: 'new' }
+        ];
+
+        // ============================================
+        // STATE
+        // ============================================
+        let cart = JSON.parse(localStorage.getItem('istanbulCart') || '[]');
+        let favorites = JSON.parse(localStorage.getItem('istanbulFavs') || '[]');
+        let currentCategory = 'all';
+        let searchQuery = '';
+        let selectedProduct = null;
+        let modalQuantity = 1;
+        let tableMode = false;
+        let tableNumber = null;
+        let heroInterval = null;
+        let currentSlide = 0;
+
+        // ============================================
+        // INIT
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            // QR Table Mode Detection
+            const params = new URLSearchParams(window.location.search);
+            const tableParam = params.get('table');
+            
+            if (tableParam) {
+                tableMode = true;
+                tableNumber = tableParam;
+                document.getElementById('tableBadge').style.display = 'flex';
+                document.getElementById('tableNumber').textContent = `Masa ${tableNumber}`;
+            }
+            
+            renderCategories();
+            renderProducts();
+            updateCartUI();
+            startHeroSlider();
+            
+            setTimeout(() => {
+                document.getElementById('splash').classList.add('hidden');
+            }, 1500);
+        });
+
+        // ============================================
+        // HERO SLIDER
+        // ============================================
+        function startHeroSlider() {
+            heroInterval = setInterval(() => {
+                currentSlide = (currentSlide + 1) % 3;
+                goToSlide(currentSlide);
+            }, 4000);
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            const slides = document.querySelectorAll('.hero-slide');
+            const dots = document.querySelectorAll('.hero-dot');
+            
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === index);
+            });
+            
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
+            });
+        }
+
+        // ============================================
+        // CATEGORIES
+        // ============================================
+        const categories = [
+            { id: 'all', name: 'Hamısı', icon: 'fa-list' },
+            { id: 'doner', name: 'Dönər Çeşidləri', icon: 'fa-drumstick-bite' },
+            { id: 'plate', name: 'Boşqab Yeməkləri', icon: 'fa-plate-wheat' },
+            { id: 'drink', name: 'İçkilər', icon: 'fa-mug-saucer' },
+            { id: 'extra', name: 'Əlavələr', icon: 'fa-plus-circle' }
+        ];
+
+        function renderCategories() {
+            const container = document.getElementById('categoriesContainer');
+            container.innerHTML = categories.map(cat => `
+                <div class="category-tab ${currentCategory === cat.id ? 'active' : ''}" 
+                     onclick="filterByCategory('${cat.id}')">
+                    <i class="fas ${cat.icon}"></i>
+                    <span>${cat.name}</span>
+                </div>
+            `).join('');
+        }
+
+        function filterByCategory(categoryId) {
+            currentCategory = categoryId;
+            renderCategories();
+            
+            const category = categories.find(c => c.id === categoryId);
+            document.getElementById('sectionTitle').textContent = category ? category.name : 'Bütün Məhsullar';
+            
+            renderProducts();
+        }
+
+        // ============================================
+        // PRODUCTS
+        // ============================================
+        function getFilteredProducts() {
+            return PRODUCTS.filter(product => {
+                const categoryMatch = currentCategory === 'all' || product.category === currentCategory;
+                const searchMatch = !searchQuery || 
+                    product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    product.description.toLowerCase().includes(searchQuery.toLowerCase());
+                return categoryMatch && searchMatch;
+            });
+        }
+
+        function filterProducts() {
+            searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            renderProducts();
+        }
+
+        function renderProducts() {
+            const filtered = getFilteredProducts();
+            const grid = document.getElementById('productsGrid');
+            
+            document.getElementById('itemCount').textContent = `${filtered.length} məhsul`;
+            
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-search"></i>
+                        <h3>Heç bir məhsul tapılmadı</h3>
+                        <p>Fərqli açar sözlərlə axtarın</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = filtered.map((product, index) => {
+                const cartItem = cart.find(item => item.id === product.id);
+                const quantity = cartItem ? cartItem.quantity : 0;
+                const isFavorite = favorites.includes(product.id);
+                
+                return `
+                    <div class="product-card" onclick="openProductModal(${product.id})" 
+                         style="animation-delay: ${index * 0.03}s">
+                        <div class="product-image">
+                            <img src="${product.image}" alt="${product.name}" 
+                                 onerror="this.src='https://via.placeholder.com/400x300/FF6B35/FFFFFF?text=${encodeURIComponent(product.name)}'">
+                            ${product.badge ? `<span class="product-badge ${product.badgeType}">${product.badge}</span>` : ''}
+                            <button class="favorite-btn ${isFavorite ? 'active' : ''}" 
+                                    onclick="event.stopPropagation(); toggleFavorite(${product.id})">
+                                <i class="${isFavorite ? 'fas' : 'far'} fa-heart"></i>
+                            </button>
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name">${product.name}</div>
+                            <div class="product-desc">${product.description}</div>
+                            <div class="product-meta">
+                                <span class="product-time">
+                                    <i class="far fa-clock"></i> ${product.time}
+                                </span>
+                            </div>
+                            <div class="product-footer">
+                                <div class="product-price">
+                                    $${product.price.toFixed(2)}
+                                </div>
+                                ${quantity > 0 ? `
+                                    <div class="quantity-control">
+                                        <button class="quantity-btn" onclick="event.stopPropagation(); updateCartQuantity(${product.id}, -1)">−</button>
+                                        <span class="quantity-value">${quantity}</span>
+                                        <button class="quantity-btn" onclick="event.stopPropagation(); updateCartQuantity(${product.id}, 1)">+</button>
+                                    </div>
+                                ` : `
+                                    <button class="add-btn" onclick="event.stopPropagation(); addToCart(${product.id})">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                `}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ============================================
+        // FAVORITES
+        // ============================================
+        function toggleFavorite(productId) {
+            if (favorites.includes(productId)) {
+                favorites = favorites.filter(id => id !== productId);
+            } else {
+                favorites.push(productId);
+            }
+            localStorage.setItem('istanbulFavs', JSON.stringify(favorites));
+            renderProducts();
+        }
+
+        // ============================================
+        // CART
+        // ============================================
+        function addToCart(productId, quantity = 1) {
+            const product = PRODUCTS.find(p => p.id === productId);
+            if (!product) return;
+            
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } else {
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    image: product.image,
+                    quantity: quantity
+                });
+            }
+            
+            saveCart();
+            renderProducts();
+            showToast(`${product.name} səbətə əlavə edildi`);
+        }
+
+        function updateCartQuantity(productId, change) {
+            const item = cart.find(item => item.id === productId);
+            if (!item) return;
+            
+            item.quantity += change;
+            
+            if (item.quantity <= 0) {
+                cart = cart.filter(item => item.id !== productId);
+            }
+            
+            saveCart();
+            renderProducts();
+            
+            if (document.getElementById('cartPanel').classList.contains('open')) {
+                renderCartItems();
+            }
+        }
+
+        function saveCart() {
+            localStorage.setItem('istanbulCart', JSON.stringify(cart));
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartCount').textContent = totalItems;
+            
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            document.getElementById('cartTotal').textContent = `$${total.toFixed(2)}`;
+        }
+
+        function renderCartItems() {
+            const container = document.getElementById('cartItems');
+            
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="cart-empty">
+                        <i class="fas fa-shopping-bag"></i>
+                        <h3>Səbətiniz boşdur</h3>
+                        <p>Menyudan yemək seçin</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = cart.map(item => `
+                <div class="cart-item">
+                    <div class="cart-item-image">
+                        <img src="${item.image}" alt="${item.name}" 
+                             onerror="this.src='https://via.placeholder.com/70/FF6B35/FFFFFF?text=Food'">
+                    </div>
+                    <div class="cart-item-info">
+                        <div class="cart-item-name">${item.name}</div>
+                        <div class="cart-item-price">$${(item.price * item.quantity).toFixed(2)}</div>
+                    </div>
+                    <div class="cart-item-actions">
+                        <div class="quantity-control">
+                            <button class="quantity-btn" onclick="updateCartQuantity(${item.id}, -1)">−</button>
+                            <span class="quantity-value">${item.quantity}</span>
+                            <button class="quantity-btn" onclick="updateCartQuantity(${item.id}, 1)">+</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleCart() {
+            const panel = document.getElementById('cartPanel');
+            panel.classList.toggle('open');
+            
+            if (panel.classList.contains('open')) {
+                renderCartItems();
+            }
+        }
+
+        function clearCart() {
+            cart = [];
+            saveCart();
+            renderProducts();
+            renderCartItems();
+            showToast('Səbət təmizləndi');
+        }
+
+        // ============================================
+        // PRODUCT MODAL
+        // ============================================
+        function openProductModal(productId) {
+            const product = PRODUCTS.find(p => p.id === productId);
+            if (!product) return;
+            
+            selectedProduct = product;
+            modalQuantity = 1;
+            
+            document.getElementById('modalImage').src = product.image;
+            document.getElementById('modalCategory').textContent = product.categoryName;
+            document.getElementById('modalTitle').textContent = product.name;
+            document.getElementById('modalTime').textContent = product.time;
+            document.getElementById('modalCalories').textContent = product.calories;
+            document.getElementById('modalDescription').textContent = product.description;
+            document.getElementById('modalPrice').textContent = `$${product.price.toFixed(2)}`;
+            document.getElementById('modalQuantity').textContent = modalQuantity;
+            
+            const ingredientsHtml = product.ingredients.map(ing => 
+                `<span class="ingredient-tag">${ing}</span>`
+            ).join('');
+            document.getElementById('modalIngredients').innerHTML = ingredientsHtml;
+            
+            document.getElementById('productModal').classList.add('open');
+        }
+
+        function closeModal() {
+            document.getElementById('productModal').classList.remove('open');
+            selectedProduct = null;
+        }
+
+        function updateModalQuantity(change) {
+            modalQuantity = Math.max(1, modalQuantity + change);
+            document.getElementById('modalQuantity').textContent = modalQuantity;
+        }
+
+        function addToCartFromModal() {
+            if (!selectedProduct) return;
+            
+            addToCart(selectedProduct.id, modalQuantity);
+            closeModal();
+        }
+
+        // ============================================
+        // ORDER PANEL
+        // ============================================
+        function openOrderPanel() {
+            if (cart.length === 0) {
+                showToast('Əvvəlcə səbətə məhsul əlavə edin', 'warning');
+                return;
+            }
+            
+            const panel = document.getElementById('orderPanel');
+            const body = document.getElementById('orderBody');
+            
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            const itemsHtml = cart.map(item => `
+                <div class="summary-item">
+                    <span>${item.name} × ${item.quantity}</span>
+                    <span>$${(item.price * item.quantity).toFixed(2)}</span>
+                </div>
+            `).join('');
+            
+            if (tableMode) {
+                // QR Masa rejimi - sadələşdirilmiş form
+                body.innerHTML = `
+                    <div class="table-info-card">
+                        <div class="table-info-icon">
+                            <i class="fas fa-chair"></i>
+                        </div>
+                        <div class="table-info-text">
+                            <h4>Masa ${tableNumber} - Daxili Sifariş</h4>
+                            <p>Sifarişiniz birbaşa bu masaya gələcək</p>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">
+                            Adınız <span class="optional">(istəyə bağlı)</span>
+                        </label>
+                        <input type="text" class="form-input" id="customerName" 
+                               placeholder="Adınızı daxil edin">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">
+                            Qeyd <span class="optional">(istəyə bağlı)</span>
+                        </label>
+                        <textarea class="form-input" id="orderNote" 
+                                  placeholder="Xüsusi istəkləriniz varsa qeyd edin"></textarea>
+                    </div>
+                    
+                    <div class="order-summary">
+                        <h4>Sifariş Detalları</h4>
+                        ${itemsHtml}
+                        <div class="summary-total">
+                            <span>Ümumi</span>
+                            <span>$${total.toFixed(2)}</span>
+                        </div>
+                    </div>
+                    
+                    <button class="submit-order-btn" onclick="submitOrder()">
+                        <i class="fas fa-check-circle"></i>
+                        Sifarişi Göndər
+                    </button>
+                `;
+            } else {
+                // Xarici sifariş - tam form
+                body.innerHTML = `
+                    <div class="form-group">
+                        <label class="form-label">
+                            Adınız <span class="optional">(istəyə bağlı)</span>
+                        </label>
+                        <input type="text" class="form-input" id="customerName" 
+                               placeholder="Adınızı daxil edin">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">
+                            Telefon Nömrəsi <span class="optional">(istəyə bağlı)</span>
+                        </label>
+                        <input type="tel" class="form-input" id="customerPhone" 
+                               placeholder="+994 XX XXX XX XX">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">
+                            Çatdırılma Ünvanı <span class="optional">(mütləq)</span>
+                        </label>
+                        <textarea class="form-input" id="deliveryAddress" 
+                                  placeholder="Ünvanı daxil edin" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">
+                            Qeyd <span class="optional">(istəyə bağlı)</span>
+                        </label>
+                        <textarea class="form-input" id="orderNote" 
+                                  placeholder="Xüsusi istəkləriniz varsa qeyd edin"></textarea>
+                    </div>
+                    
+                    <div class="order-summary">
+                        <h4>Sifariş Detalları</h4>
+                        ${itemsHtml}
+                        <div class="summary-total">
+                            <span>Ümumi</span>
+                            <span>$${total.toFixed(2)}</span>
+                        </div>
+                    </div>
+                    
+                    <button class="submit-order-btn" onclick="submitOrder()">
+                        <i class="fas fa-check-circle"></i>
+                        Sifarişi Göndər
+                    </button>
+                `;
+            }
+            
+            panel.classList.add('open');
+        }
+
+        function closeOrderPanel() {
+            document.getElementById('orderPanel').classList.remove('open');
+        }
+
+        function proceedToCheckout() {
+            toggleCart();
+            setTimeout(openOrderPanel, 300);
+        }
+
+        function submitOrder() {
+            const name = document.getElementById('customerName')?.value || '';
+            const phone = document.getElementById('customerPhone')?.value || '';
+            const address = document.getElementById('deliveryAddress')?.value || '';
+            const note = document.getElementById('orderNote')?.value || '';
+            
+            // Validation for external orders
+            if (!tableMode && !address) {
+                showToast('Zəhmət olmasa çatdırılma ünvanını daxil edin', 'error');
+                return;
+            }
+            
+            const orderData = {
+                items: cart,
+                total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+                customer: { name, phone },
+                address: address,
+                note: note,
+                table: tableMode ? tableNumber : null,
+                orderType: tableMode ? 'table' : 'delivery',
+                timestamp: new Date().toISOString()
+            };
+            
+            console.log('Sifariş göndərildi:', orderData);
+            
+            // WebSocket/Backend əlaqəsi
+            // sendToBackend(orderData);
+            
+            // Clear cart
+            cart = [];
+            saveCart();
+            renderProducts();
+            
+            closeOrderPanel();
+            showToast('✅ Sifarişiniz qəbul edildi! Tezliklə hazır olacaq.');
+        }
+
+        // ============================================
+        // UTILITIES
+        // ============================================
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const messageEl = document.getElementById('toastMessage');
+            
+            messageEl.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Global functions
+        window.goToSlide = goToSlide;
+        window.filterByCategory = filterByCategory;
+        window.filterProducts = filterProducts;
+        window.toggleFavorite = toggleFavorite;
+        window.addToCart = addToCart;
+        window.updateCartQuantity = updateCartQuantity;
+        window.toggleCart = toggleCart;
+        window.openProductModal = openProductModal;
+        window.closeModal = closeModal;
+        window.updateModalQuantity = updateModalQuantity;
+        window.addToCartFromModal = addToCartFromModal;
+        window.openOrderPanel = openOrderPanel;
+        window.closeOrderPanel = closeOrderPanel;
+        window.proceedToCheckout = proceedToCheckout;
+        window.submitOrder = submitOrder;
+        window.scrollToTop = scrollToTop;
+
+        console.log('🚀 İstanbul Kafe - Premium Menyu Sistemi yükləndi');
+    </script>
+</body>
+</html>

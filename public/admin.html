@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="theme-color" content="#36BEFF">
+    <title>İstanbul Kafe | Admin Panel</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #36BEFF;
+            --primary-dark: #1AA0E0;
+            --success: #27AE60;
+            --warning: #F39C12;
+            --danger: #E74C3C;
+            --bg: #FAFEFF;
+            --card: #FFFFFF;
+            --text: #1A1A1A;
+            --text-secondary: #6B7280;
+            --border: #E5E7EB;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #36BEFF 0%, #FAFEFF 100%);
+            min-height: 100vh;
+            color: var(--text);
+        }
+
+        /* Login Screen */
+        #loginScreen {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #36BEFF 0%, #FAFEFF 100%);
+            z-index: 9999;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 24px;
+            padding: 48px 40px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            text-align: center;
+        }
+
+        .login-logo {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .login-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .login-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(54, 190, 255, 0.3);
+        }
+
+        .login-error {
+            color: var(--danger);
+            margin-top: 16px;
+            font-size: 14px;
+        }
+
+        /* Main Panel */
+        #mainPanel {
+            display: none;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .admin-header {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 24px;
+        }
+
+        .stat-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: white;
+            border-radius: 50px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.disconnected {
+            background: var(--danger);
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Dashboard */
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            border: 1px solid var(--border);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .orders-section {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            border: 1px solid var(--border);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-tab {
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .filter-tab:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .filter-tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Orders List */
+        .orders-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .order-card {
+            background: var(--bg);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+            animation: slideIn 0.3s ease;
+        }
+
+        .order-card.new {
+            background: #E6F7FF;
+            border-color: var(--primary);
+            animation: highlight 1s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes highlight {
+            0%, 100% { background: var(--bg); }
+            50% { background: #E6F7FF; }
+        }
+
+        .order-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .order-id {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 14px;
+        }
+
+        .order-time {
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .order-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .order-info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .order-info-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .order-info-value {
+            font-weight: 600;
+        }
+
+        .order-items {
+            margin-bottom: 16px;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 14px;
+        }
+
+        .order-total {
+            text-align: right;
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--primary);
+            margin-bottom: 16px;
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .status-select {
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: white;
+            font-weight: 500;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-pending { background: #FEF3C7; color: #D97706; }
+        .status-preparing { background: #DBEAFE; color: #2563EB; }
+        .status-ready { background: #D1FAE5; color: #059669; }
+        .status-delivered { background: #E0E7FF; color: #4F46E5; }
+        .status-completed { background: #D1FAE5; color: #059669; }
+        .status-cancelled { background: #FEE2E2; color: #DC2626; }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* Notification Toast */
+        .notification-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 400px;
+        }
+
+        .toast-message {
+            background: white;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            animation: toastSlideIn 0.3s ease;
+            border-left: 4px solid var(--primary);
+        }
+
+        @keyframes toastSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .toast-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 20px;
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .toast-body {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 16px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .order-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen">
+        <div class="login-card">
+            <div class="login-logo">
+                <i class="fas fa-utensils"></i> İstanbul Kafe
+            </div>
+            <div class="login-subtitle">Admin Panel</div>
+            <input type="password" id="secretInput" class="login-input" placeholder="Admin şifrəsi" autofocus>
+            <button class="login-btn" onclick="login()">
+                <i class="fas fa-sign-in-alt"></i> Daxil Ol
+            </button>
+            <div id="loginError" class="login-error"></div>
+        </div>
+    </div>
+
+    <!-- Main Panel -->
+    <div id="mainPanel">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="header-content">
+                <div class="header-title">
+                    <i class="fas fa-utensils"></i>
+                    İstanbul Kafe Admin
+                </div>
+                <div class="header-stats">
+                    <div class="stat-badge">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span id="totalOrders">0</span> Sifariş
+                    </div>
+                    <div class="connection-status">
+                        <span class="status-dot" id="connectionStatus"></span>
+                        <span id="connectionText">Bağlanır...</span>
+                    </div>
+                    <button class="stat-badge" onclick="logout()" style="cursor: pointer;">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Çıxış
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard -->
+        <div class="dashboard">
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Gözləyən</div>
+                    <div class="stat-value" id="pendingCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Hazırlanan</div>
+                    <div class="stat-value" id="preparingCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Hazır</div>
+                    <div class="stat-value" id="readyCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Bu gün</div>
+                    <div class="stat-value" id="todayOrders">0</div>
+                </div>
+            </div>
+
+            <!-- Orders Section -->
+            <div class="orders-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fas fa-clipboard-list"></i>
+                        Sifarişlər
+                    </div>
+                    <div class="filter-tabs">
+                        <div class="filter-tab active" onclick="filterOrders('all')">Hamısı</div>
+                        <div class="filter-tab" onclick="filterOrders('pending')">Gözləyən</div>
+                        <div class="filter-tab" onclick="filterOrders('preparing')">Hazırlanan</div>
+                        <div class="filter-tab" onclick="filterOrders('ready')">Hazır</div>
+                    </div>
+                </div>
+                <div class="orders-list" id="ordersList">
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <h3>Sifariş yoxdur</h3>
+                        <p>Yeni sifarişlər burada görünəcək</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast Container -->
+    <div class="notification-toast" id="toastContainer"></div>
+
+    <!-- Hidden Audio for Notifications -->
+    <audio id="notificationSound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRlwAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YVoAAACAgICAf39/f39/f39/f3+AgICAf39/f39/f39/f3+AgICAf39/f39/f39/f3+AgICAf39/f39/f39/f38=" type="audio/wav">
+    </audio>
+
+    <script>
+        // ============================================
+        // ADMIN PANEL SCRIPT
+        // ============================================
+        
+        let ws = null;
+        let orders = [];
+        let currentFilter = 'all';
+        let secret = localStorage.getItem('admin_secret') || '';
+        let reconnectAttempts = 0;
+        const maxReconnectAttempts = 5;
+
+        // DOM Elements
+        const loginScreen = document.getElementById('loginScreen');
+        const mainPanel = document.getElementById('mainPanel');
+        const loginError = document.getElementById('loginError');
+        const connectionStatus = document.getElementById('connectionStatus');
+        const connectionText = document.getElementById('connectionText');
+        const ordersList = document.getElementById('ordersList');
+        const toastContainer = document.getElementById('toastContainer');
+        const notificationSound = document.getElementById('notificationSound');
+
+        // Check if already logged in
+        if (secret) {
+            loginScreen.style.display = 'none';
+            mainPanel.style.display = 'block';
+            connectWebSocket();
+        }
+
+        // Login function
+        function login() {
+            const inputSecret = document.getElementById('secretInput').value;
+            
+            if (!inputSecret) {
+                loginError.textContent = 'Şifrə daxil edin';
+                return;
+            }
+            
+            // Test connection with HTTP first
+            fetch('/api/admin/auth', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ secret: inputSecret })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    secret = inputSecret;
+                    localStorage.setItem('admin_secret', secret);
+                    loginScreen.style.display = 'none';
+                    mainPanel.style.display = 'block';
+                    connectWebSocket();
+                } else {
+                    loginError.textContent = 'Səhv şifrə';
+                }
+            })
+            .catch(() => {
+                loginError.textContent = 'Serverə qoşulmaq mümkün olmadı';
+            });
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('admin_secret');
+            secret = '';
+            if (ws) ws.close();
+            loginScreen.style.display = 'flex';
+            mainPanel.style.display = 'none';
+            document.getElementById('secretInput').value = '';
+        }
+
+        // Connect WebSocket
+        function connectWebSocket() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}`;
+            
+            ws = new WebSocket(wsUrl);
+            
+            ws.onopen = () => {
+                console.log('✅ WebSocket bağlandı');
+                connectionStatus.classList.remove('disconnected');
+                connectionText.textContent = 'Online';
+                reconnectAttempts = 0;
+                
+                // Register as admin
+                ws.send(JSON.stringify({
+                    type: 'REGISTER_ADMIN',
+                    secret: secret
+                }));
+            };
+            
+            ws.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    handleWebSocketMessage(data);
+                } catch (error) {
+                    console.error('Mesaj xətası:', error);
+                }
+            };
+            
+            ws.onclose = () => {
+                console.log('❌ WebSocket bağlantısı kəsildi');
+                connectionStatus.classList.add('disconnected');
+                connectionText.textContent = 'Offline';
+                
+                // Reconnect
+                if (reconnectAttempts < maxReconnectAttempts) {
+                    reconnectAttempts++;
+                    setTimeout(connectWebSocket, 3000);
+                    connectionText.textContent = `Yenidən bağlanır (${reconnectAttempts}/${maxReconnectAttempts})`;
+                }
+            };
+            
+            ws.onerror = (error) => {
+                console.error('WebSocket xətası:', error);
+            };
+        }
+
+        // Handle WebSocket messages
+        function handleWebSocketMessage(data) {
+            switch (data.type) {
+                case 'ADMIN_REGISTERED':
+                    console.log('👑 Admin qeydiyyatdan keçdi');
+                    if (data.orders) {
+                        orders = data.orders;
+                        renderOrders();
+                        updateStats();
+                    }
+                    showNotification('Admin Panelə Xoş Gəldiniz', 'Bağlantı uğurla quruldu', 'success');
+                    break;
+                    
+                case 'NEW_ORDER':
+                    const newOrder = data.order;
+                    orders.unshift(newOrder);
+                    renderOrders();
+                    updateStats();
+                    
+                    // Sound notification
+                    if (data.notification?.sound) {
+                        playNotificationSound();
+                    }
+                    
+                    // Visual notification
+                    showNotification(
+                        data.notification?.title || '🛎️ Yeni Sifariş!',
+                        data.notification?.body || `Yeni sifariş gəldi`,
+                        'new-order'
+                    );
+                    
+                    // Highlight new order
+                    setTimeout(() => {
+                        const firstCard = document.querySelector('.order-card');
+                        if (firstCard) firstCard.classList.add('new');
+                    }, 100);
+                    break;
+                    
+                case 'ORDER_UPDATED':
+                    const updatedOrder = data.order;
+                    const index = orders.findIndex(o => o.id === updatedOrder.id);
+                    if (index !== -1) {
+                        orders[index] = updatedOrder;
+                        renderOrders();
+                        updateStats();
+                    }
+                    break;
+                    
+                case 'PONG':
+                    // Keep-alive response
+                    break;
+                    
+                case 'ERROR':
+                    showNotification('Xəta', data.message, 'error');
+                    break;
+            }
+        }
+
+        // Play notification sound
+        function playNotificationSound() {
+            notificationSound.currentTime = 0;
+            notificationSound.play().catch(e => console.log('Səs çalına bilmədi'));
+        }
+
+        // Show notification toast
+        function showNotification(title, body, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = 'toast-message';
+            
+            let icon = '🔔';
+            if (type === 'new-order') icon = '🛎️';
+            if (type === 'success') icon = '✅';
+            if (type === 'error') icon = '❌';
+            
+            toast.innerHTML = `
+                <div class="toast-icon">${icon}</div>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-body">${body}</div>
+                </div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 5000);
+        }
+
+        // Filter orders
+        function filterOrders(filter) {
+            currentFilter = filter;
+            
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            renderOrders();
+        }
+
+        // Update status
+        function updateOrderStatus(orderId, status) {
+            ws.send(JSON.stringify({
+                type: 'UPDATE_ORDER_STATUS',
+                orderId,
+                status
+            }));
+            
+            showNotification('Status Yeniləndi', `Sifariş ${orderId} statusu: ${status}`, 'success');
+        }
+
+        // Render orders
+        function renderOrders() {
+            let filteredOrders = orders;
+            
+            if (currentFilter !== 'all') {
+                filteredOrders = orders.filter(o => o.status === currentFilter);
+            }
+            
+            if (filteredOrders.length === 0) {
+                ordersList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <h3>Sifariş yoxdur</h3>
+                        <p>${currentFilter === 'all' ? 'Yeni sifarişlər burada görünəcək' : 'Bu statusda sifariş yoxdur'}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            ordersList.innerHTML = filteredOrders.map(order => {
+                const statusClass = `status-${order.status}`;
+                const statusText = {
+                    pending: 'Gözləyir',
+                    preparing: 'Hazırlanır',
+                    ready: 'Hazırdır',
+                    delivered: 'Çatdırıldı',
+                    completed: 'Tamamlandı',
+                    cancelled: 'Ləğv edildi'
+                }[order.status] || order.status;
+                
+                const time = new Date(order.timestamp).toLocaleTimeString('az-AZ', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                return `
+                    <div class="order-card">
+                        <div class="order-header">
+                            <span class="order-id">#${order.id}</span>
+                            <span class="order-time">
+                                <i class="far fa-clock"></i> ${time}
+                            </span>
+                        </div>
+                        
+                        <div class="order-info">
+                            <div class="order-info-item">
+                                <span class="order-info-label">Masa/Tip</span>
+                                <span class="order-info-value">
+                                    ${order.table ? `Masa ${order.table}` : 'Çatdırılma'}
+                                </span>
+                            </div>
+                            <div class="order-info-item">
+                                <span class="order-info-label">Müştəri</span>
+                                <span class="order-info-value">
+                                    ${order.customer?.name || 'Anonim'}
+                                    ${order.customer?.phone ? `<br><small>${order.customer.phone}</small>` : ''}
+                                </span>
+                            </div>
+                            ${!order.table && order.address ? `
+                                <div class="order-info-item">
+                                    <span class="order-info-label">Ünvan</span>
+                                    <span class="order-info-value">${order.address}</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                        
+                        <div class="order-items">
+                            ${order.items.map(item => `
+                                <div class="order-item">
+                                    <span>${item.quantity}x ${item.name}</span>
+                                    <span>$${(item.price * item.quantity).toFixed(2)}</span>
+                                </div>
+                            `).join('')}
+                            ${order.note ? `
+                                <div class="order-item" style="color: var(--text-secondary); font-style: italic; margin-top: 8px;">
+                                    <i class="fas fa-pencil-alt"></i> ${order.note}
+                                </div>
+                            ` : ''}
+                        </div>
+                        
+                        <div class="order-total">
+                            Ümumi: $${order.total?.toFixed(2) || '0.00'}
+                        </div>
+                        
+                        <div class="order-actions">
+                            <span class="status-badge ${statusClass}">${statusText}</span>
+                            <select class="status-select" onchange="updateOrderStatus('${order.id}', this.value)">
+                                <option value="">Statusu dəyiş</option>
+                                <option value="pending">Gözləyir</option>
+                                <option value="preparing">Hazırlanır</option>
+                                <option value="ready">Hazırdır</option>
+                                <option value="delivered">Çatdırıldı</option>
+                                <option value="completed">Tamamlandı</option>
+                                <option value="cancelled">Ləğv et</option>
+                            </select>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Update statistics
+        function updateStats() {
+            const today = new Date().toISOString().split('T')[0];
+            
+            document.getElementById('pendingCount').textContent = orders.filter(o => o.status === 'pending').length;
+            document.getElementById('preparingCount').textContent = orders.filter(o => o.status === 'preparing').length;
+            document.getElementById('readyCount').textContent = orders.filter(o => o.status === 'ready').length;
+            document.getElementById('todayOrders').textContent = orders.filter(o => o.timestamp?.startsWith(today)).length;
+            document.getElementById('totalOrders').textContent = orders.length;
+        }
+
+        // Global functions
+        window.login = login;
+        window.logout = logout;
+        window.filterOrders = filterOrders;
+        window.updateOrderStatus = updateOrderStatus;
+
+        // Keyboard shortcut for login
+        document.getElementById('secretInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') login();
+        });
+
+        console.log('🍽️ İstanbul Kafe Admin Panel yükləndi');
+    </script>
+</body>
+</html>

@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#FF6B35">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>İstanbul Kafe | Masa QR Kodları</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <style>
+        /* ============================================
+           PREMIUM LIGHT THEME - İSTANBUL KAFE QR
+           ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #FF6B35;
+            --primary-dark: #E85A2C;
+            --primary-light: #FFF0E8;
+            --secondary: #2C3E50;
+            --accent: #F4A261;
+            --success: #27AE60;
+            --warning: #F39C12;
+            --danger: #E74C3C;
+            
+            --bg-primary: #FFF9F5;
+            --bg-secondary: #FFFFFF;
+            --bg-card: rgba(255, 255, 255, 0.95);
+            
+            --text-primary: #1A1A1A;
+            --text-secondary: #4A4A4A;
+            --text-muted: #8A8A8A;
+            --text-light: #B0B0B0;
+            
+            --border-light: rgba(255, 107, 53, 0.15);
+            --border-medium: rgba(255, 107, 53, 0.25);
+            
+            --shadow-sm: 0 2px 8px rgba(255, 107, 53, 0.08);
+            --shadow-md: 0 8px 24px rgba(255, 107, 53, 0.12);
+            --shadow-lg: 0 16px 40px rgba(255, 107, 53, 0.16);
+            --shadow-xl: 0 24px 60px rgba(255, 107, 53, 0.2);
+            
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --radius-2xl: 32px;
+            --radius-full: 9999px;
+            
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #FFF5F0 0%, #FFE8E0 50%, #FFF9F5 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Dekorativ background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 0% 0%, rgba(255, 107, 53, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(244, 162, 97, 0.04) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(44, 62, 80, 0.02) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+            animation: bgPulse 15s ease-in-out infinite alternate;
+        }
+
+        @keyframes bgPulse {
+            0% { opacity: 0.5; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1.05); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 107, 53, 0.1);
+            border-radius: var(--radius-full);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: var(--radius-full);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+        }
+
+        /* ============================================
+           HEADER - PREMIUM DESIGN
+           ============================================ */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(20px) saturate(180%);
+            background: rgba(255, 255, 255, 0.85);
+            border-bottom: 1px solid var(--border-light);
+            box-shadow: 0 4px 30px rgba(255, 107, 53, 0.05);
+            padding: 0 32px;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .logo-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo-icon {
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(255, 107, 53, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-icon::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            transform: rotate(45deg);
+            animation: logoShine 3s infinite;
+        }
+
+        @keyframes logoShine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .logo-icon i {
+            font-size: 28px;
+            color: white;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-title {
+            font-size: 28px;
+            font-weight: 800;
+            font-family: 'Playfair Display', serif;
+            color: var(--text-primary);
+            line-height: 1.2;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-subtitle {
+            font-size: 13px;
+            color: var(--primary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-subtitle i {
+            font-size: 12px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 8px 20px rgba(255, 107, 53, 0.25);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(255, 107, 53, 0.35);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--border-medium);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .btn-white {
+            background: white;
+            color: var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-white:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        /* ============================================
+           CONFIG BAR - STICKY CONTROLS
+           ============================================ */
+        .config-section {
+            background: white;
+            border-bottom: 1px solid var(--border-light);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .config-bar {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px 32px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .config-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .config-group label {
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .config-group label i {
+            color: var(--primary);
+            font-size: 16px;
+        }
+
+        .config-input {
+            padding: 12px 16px;
+            background: var(--bg-primary);
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            color: var(--text-primary);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: var(--transition);
+            min-width: 280px;
+        }
+
+        .config-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.1);
+            background: white;
+        }
+
+        .config-input-small {
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .config-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-left: 8px;
+        }
+
+        /* ============================================
+           INFO BANNER - HOW IT WORKS
+           ============================================ */
+        .info-banner {
+            max-width: 1400px;
+            margin: 24px 32px;
+            padding: 20px 28px;
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.05), rgba(255, 245, 240, 0.5));
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .info-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 8px 16px rgba(255, 107, 53, 0.2);
+        }
+
+        .info-icon i {
+            font-size: 24px;
+            color: white;
+        }
+
+        .info-content {
+            flex: 1;
+        }
+
+        .info-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .info-title i {
+            font-size: 16px;
+        }
+
+        .info-text {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-size: 14px;
+        }
+
+        .info-text strong {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .info-text code {
+            background: rgba(255, 107, 53, 0.1);
+            padding: 2px 8px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+
+        /* ============================================
+           QR GRID - PREMIUM CARDS
+           ============================================ */
+        .qr-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 8px 32px 60px;
+        }
+
+        .qr-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 24px;
+        }
+
+        .qr-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            padding: 28px 20px;
+            text-align: center;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            animation: cardAppear 0.5s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes cardAppear {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .qr-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent), var(--primary));
+            background-size: 200% 100%;
+            animation: gradientMove 3s ease infinite;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .qr-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--border-medium);
+        }
+
+        .qr-card:hover::before {
+            opacity: 1;
+        }
+
+        .qr-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent, rgba(255, 107, 53, 0.02));
+            pointer-events: none;
+        }
+
+        .qr-badge-new {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: linear-gradient(135deg, var(--success), #2ECC71);
+            color: white;
+            padding: 4px 12px;
+            border-radius: var(--radius-full);
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+            z-index: 1;
+        }
+
+        .qr-table-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .qr-table-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--primary-light), white);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .qr-table-icon i {
+            font-size: 22px;
+            color: var(--primary);
+        }
+
+        .qr-table-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .qr-table-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .qr-code-wrapper {
+            background: white;
+            padding: 16px;
+            border-radius: var(--radius-lg);
+            display: inline-block;
+            margin-bottom: 16px;
+            box-shadow: 0 8px 24px rgba(255, 107, 53, 0.08);
+            border: 1px solid var(--border-light);
+            transition: var(--transition);
+        }
+
+        .qr-card:hover .qr-code-wrapper {
+            box-shadow: 0 12px 32px rgba(255, 107, 53, 0.15);
+        }
+
+        .qr-code-container {
+            width: 160px;
+            height: 160px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-md);
+        }
+
+        .qr-code-container canvas,
+        .qr-code-container img {
+            border-radius: var(--radius-sm);
+        }
+
+        .qr-url-preview {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            padding: 8px 12px;
+            background: var(--primary-light);
+            border-radius: var(--radius-full);
+            word-break: break-all;
+            border: 1px solid var(--border-light);
+        }
+
+        .qr-feature-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(39, 174, 96, 0.1);
+            border: 1px solid rgba(39, 174, 96, 0.2);
+            color: var(--success);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: var(--radius-full);
+            margin-bottom: 16px;
+        }
+
+        .qr-feature-badge i {
+            font-size: 12px;
+        }
+
+        .qr-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .qr-btn {
+            padding: 8px 14px;
+            border-radius: var(--radius-full);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: none;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: white;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-light);
+        }
+
+        .qr-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .qr-btn-primary {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .qr-btn-primary:hover {
+            background: var(--primary-dark);
+            box-shadow: 0 8px 16px rgba(255, 107, 53, 0.25);
+        }
+
+        .qr-btn-success {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        .qr-btn-success:hover {
+            background: #219A52;
+        }
+
+        .qr-btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-medium);
+        }
+
+        .qr-btn-outline:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .qr-btn.copied {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        /* ============================================
+           PRINT STYLES
+           ============================================ */
+        @media print {
+            .header, .config-section, .info-banner, .qr-actions, #toast,
+            .btn, .config-bar, .qr-badge-new, .qr-feature-badge {
+                display: none !important;
+            }
+            
+            body {
+                background: white;
+                padding: 20px;
+            }
+            
+            body::before {
+                display: none;
+            }
+            
+            .qr-container {
+                padding: 0;
+            }
+            
+            .qr-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 16px;
+            }
+            
+            .qr-card {
+                background: white;
+                border: 1px solid #E0E0E0;
+                box-shadow: none;
+                page-break-inside: avoid;
+                break-inside: avoid;
+                padding: 20px 16px;
+            }
+            
+            .qr-card::before,
+            .qr-card::after {
+                display: none;
+            }
+            
+            .qr-code-wrapper {
+                box-shadow: none;
+                border: 1px solid #E0E0E0;
+            }
+            
+            .qr-table-number {
+                color: var(--primary);
+            }
+            
+            .qr-url-preview {
+                background: #F5F5F5;
+                border: 1px solid #E0E0E0;
+            }
+        }
+
+        /* ============================================
+           TOAST NOTIFICATION
+           ============================================ */
+        .toast {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: white;
+            color: var(--text-primary);
+            padding: 14px 28px;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            font-size: 14px;
+            opacity: 0;
+            transition: var(--transition);
+            pointer-events: none;
+            z-index: 9999;
+            box-shadow: var(--shadow-xl);
+            border-left: 4px solid var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast i {
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .toast.success {
+            border-left-color: var(--success);
+        }
+
+        .toast.success i {
+            color: var(--success);
+        }
+
+        .toast.error {
+            border-left-color: var(--danger);
+        }
+
+        .toast.error i {
+            color: var(--danger);
+        }
+
+        /* ============================================
+           EMPTY STATE
+           ============================================ */
+        .empty-state {
+            text-align: center;
+            padding: 80px 24px;
+            grid-column: 1 / -1;
+        }
+
+        .empty-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 24px;
+            background: linear-gradient(135deg, var(--primary-light), white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-md);
+        }
+
+        .empty-icon i {
+            font-size: 48px;
+            color: var(--primary);
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .empty-text {
+            color: var(--text-muted);
+            font-size: 16px;
+        }
+
+        /* ============================================
+           LOADING SPINNER
+           ============================================ */
+        .loading-spinner {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 24px;
+            border: 3px solid var(--border-light);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ============================================
+           RESPONSIVE DESIGN
+           ============================================ */
+        @media (max-width: 768px) {
+            .header {
+                padding: 0 16px;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .header-actions {
+                justify-content: center;
+            }
+            
+            .config-bar {
+                padding: 16px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .config-group {
+                flex-wrap: wrap;
+            }
+            
+            .config-input {
+                min-width: 100%;
+            }
+            
+            .info-banner {
+                margin: 16px;
+                padding: 20px;
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .info-icon {
+                margin: 0 auto;
+            }
+            
+            .qr-container {
+                padding: 8px 16px 40px;
+            }
+            
+            .qr-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo-title {
+                font-size: 22px;
+            }
+            
+            .btn {
+                padding: 10px 16px;
+                font-size: 12px;
+            }
+            
+            .qr-actions {
+                flex-direction: column;
+            }
+            
+            .qr-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-wrapper">
+                <div class="logo-icon">
+                    <i class="fas fa-utensils"></i>
+                </div>
+                <div class="logo-text">
+                    <span class="logo-title">İstanbul Kafe</span>
+                    <span class="logo-subtitle">
+                        <i class="fas fa-qrcode"></i>
+                        Masa QR Kodları
+                    </span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="index.html" class="btn btn-outline">
+                    <i class="fas fa-home"></i>
+                    Ana Səhifə
+                </a>
+                <button class="btn btn-white" onclick="refreshGrid()">
+                    <i class="fas fa-sync-alt"></i>
+                    Yenilə
+                </button>
+                <button class="btn btn-primary" onclick="window.print()">
+                    <i class="fas fa-print"></i>
+                    Hamısını Çap Et
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Config Bar -->
+    <section class="config-section">
+        <div class="config-bar">
+            <div class="config-group">
+                <label>
+                    <i class="fas fa-globe"></i>
+                    Sayt URL:
+                </label>
+                <input type="text" class="config-input" id="siteUrl" 
+                       placeholder="https://istanbulkafe.az" 
+                       value="">
+                <span class="config-hint">Boş saxlasanız avtomatik təyin olunacaq</span>
+            </div>
+            <div class="config-group">
+                <label>
+                    <i class="fas fa-chair"></i>
+                    Masa sayı:
+                </label>
+                <input type="number" class="config-input config-input-small" 
+                       id="tableCount" min="1" max="50" value="12">
+            </div>
+            <button class="btn btn-primary" onclick="generateQRCodes()">
+                <i class="fas fa-check-circle"></i>
+                Tətbiq Et
+            </button>
+        </div>
+    </section>
+
+    <!-- Info Banner -->
+    <div class="info-banner">
+        <div class="info-icon">
+            <i class="fas fa-lightbulb"></i>
+        </div>
+        <div class="info-content">
+            <div class="info-title">
+                <i class="fas fa-arrow-right"></i>
+                Necə işləyir?
+            </div>
+            <div class="info-text">
+                <strong>Hər QR kod eyni menyu səhifəsini açır</strong> (<code>index.html</code>), 
+                lakin URL-də <code>?table=N</code> parametri ilə masa nömrəsi göndərilir. 
+                Müştəri QR kodu skan edib sifariş verdikdə, <strong>admin panel real-time olaraq 
+                sifarişin hansı masadan gəldiyini görür</strong>. 
+                <br>
+                <i class="fas fa-exclamation-triangle" style="color: var(--warning); margin-right: 4px;"></i>
+                <strong>Vacib:</strong> Çap etməzdən əvvəl yuxarıda öz sayt URL-inizi daxil edin!
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Grid Container -->
+    <div class="qr-container">
+        <div class="qr-grid" id="qrGrid">
+            <div class="empty-state">
+                <div class="loading-spinner"></div>
+                <div class="empty-title">QR Kodlar Hazırlanır</div>
+                <div class="empty-text">Zəhmət olmasa gözləyin...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Mesaj</span>
+    </div>
+
+    <script>
+        // ============================================
+        // İSTANBUL KAFE - QR KOD GENERATOR
+        // ============================================
+        
+        let currentQRData = [];
+        let toastTimeout = null;
+        
+        // DOM Elements
+        const qrGrid = document.getElementById('qrGrid');
+        const siteUrlInput = document.getElementById('siteUrl');
+        const tableCountInput = document.getElementById('tableCount');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Auto-detect URL
+            if (!['localhost', '127.0.0.1', ''].includes(window.location.hostname)) {
+                siteUrlInput.value = window.location.origin;
+            } else {
+                siteUrlInput.value = window.location.origin;
+            }
+            
+            // Generate initial QR codes
+            generateQRCodes();
+        });
+        
+        // Get base URL
+        function getBaseUrl() {
+            const customUrl = siteUrlInput.value.trim().replace(/\/$/, '');
+            return customUrl || window.location.origin;
+        }
+        
+        // Get table count
+        function getTableCount() {
+            let count = parseInt(tableCountInput.value);
+            if (isNaN(count) || count < 1) count = 12;
+            if (count > 50) count = 50;
+            return count;
+        }
+        
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            clearTimeout(toastTimeout);
+            
+            toast.className = 'toast ' + type;
+            toastMessage.textContent = message;
+            
+            const icon = toast.querySelector('i');
+            if (type === 'success') {
+                icon.className = 'fas fa-check-circle';
+            } else if (type === 'error') {
+                icon.className = 'fas fa-exclamation-circle';
+            } else {
+                icon.className = 'fas fa-info-circle';
+            }
+            
+            toast.classList.add('show');
+            
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Generate all QR codes
+        function generateQRCodes() {
+            const baseUrl = getBaseUrl();
+            const tableCount = getTableCount();
+            
+            // Clear grid with loading state
+            qrGrid.innerHTML = `
+                <div class="empty-state">
+                    <div class="loading-spinner"></div>
+                    <div class="empty-title">QR Kodlar Yaradılır</div>
+                    <div class="empty-text">${tableCount} masa üçün QR kod hazırlanır...</div>
+                </div>
+            `;
+            
+            // Generate after small delay for smooth animation
+            setTimeout(() => {
+                qrGrid.innerHTML = '';
+                currentQRData = [];
+                
+                for (let tableNumber = 1; tableNumber <= tableCount; tableNumber++) {
+                    const menuUrl = `${baseUrl}/index.html?table=${tableNumber}`;
+                    const card = createQRCard(tableNumber, menuUrl);
+                    qrGrid.appendChild(card);
+                    currentQRData.push({ tableNumber, url: menuUrl, cardId: `qr-card-${tableNumber}` });
+                }
+                
+                // Generate QR codes for each card
+                currentQRData.forEach(data => {
+                    generateQRCodeForCard(data.tableNumber, data.url);
+                });
+                
+                showToast(`${tableCount} masa üçün QR kodlar hazırlandı`, 'success');
+            }, 300);
+        }
+        
+        // Create QR card HTML
+        function createQRCard(tableNumber, url) {
+            const card = document.createElement('div');
+            card.className = 'qr-card';
+            card.id = `qr-card-${tableNumber}`;
+            card.style.animationDelay = `${(tableNumber - 1) * 0.05}s`;
+            
+            card.innerHTML = `
+                <div class="qr-badge-new">
+                    <i class="fas fa-qrcode"></i> SKAN ET
+                </div>
+                
+                <div class="qr-table-header">
+                    <div class="qr-table-icon">
+                        <i class="fas fa-chair"></i>
+                    </div>
+                    <div>
+                        <div class="qr-table-number">Masa ${tableNumber}</div>
+                        <div class="qr-table-label">1-4 nəfərlik</div>
+                    </div>
+                </div>
+                
+                <div class="qr-code-wrapper">
+                    <div class="qr-code-container" id="qr-container-${tableNumber}"></div>
+                </div>
+                
+                <div class="qr-url-preview" title="${url}">
+                    <i class="fas fa-link" style="margin-right: 4px;"></i>
+                    ${url.length > 40 ? url.substring(0, 40) + '...' : url}
+                </div>
+                
+                <div class="qr-feature-badge">
+                    <i class="fas fa-check-circle"></i>
+                    Skan et → Menyu açılır → Admin masanı görür
+                </div>
+                
+                <div class="qr-actions">
+                    <button class="qr-btn qr-btn-primary" onclick="openMenuFromQR(${tableNumber})">
+                        <i class="fas fa-eye"></i>
+                        Menyunu Aç
+                    </button>
+                    <button class="qr-btn qr-btn-outline" onclick="copyQRUrl(${tableNumber}, '${url}')" id="copy-btn-${tableNumber}">
+                        <i class="fas fa-copy"></i>
+                        Linki Kopyala
+                    </button>
+                    <button class="qr-btn qr-btn-success" onclick="downloadQRCode(${tableNumber})">
+                        <i class="fas fa-download"></i>
+                        Yüklə
+                    </button>
+                </div>
+            `;
+            
+            return card;
+        }
+        
+        // Generate QR code for specific card
+        function generateQRCodeForCard(tableNumber, url) {
+            const container = document.getElementById(`qr-container-${tableNumber}`);
+            if (!container) return;
+            
+            try {
+                new QRCode(container, {
+                    text: url,
+                    width: 160,
+                    height: 160,
+                    colorDark: '#FF6B35',
+                    colorLight: '#FFFFFF',
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+            } catch (error) {
+                console.error(`QR code generation error for table ${tableNumber}:`, error);
+                container.innerHTML = `
+                    <div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; color: var(--text-muted);">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                `;
+            }
+        }
+        
+        // Open menu in new tab (for testing)
+        function openMenuFromQR(tableNumber) {
+            const baseUrl = getBaseUrl();
+            const menuUrl = `${baseUrl}/index.html?table=${tableNumber}`;
+            window.open(menuUrl, '_blank');
+            showToast(`Masa ${tableNumber} menyusu yeni tabda açıldı`, 'success');
+        }
+        
+        // Copy QR URL to clipboard
+        function copyQRUrl(tableNumber, url) {
+            const copyToClipboard = (text) => {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    return navigator.clipboard.writeText(text);
+                } else {
+                    // Fallback
+                    const textarea = document.createElement('textarea');
+                    textarea.value = text;
+                    textarea.style.position = 'fixed';
+                    textarea.style.opacity = '0';
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                    return Promise.resolve();
+                }
+            };
+            
+            copyToClipboard(url).then(() => {
+                const btn = document.getElementById(`copy-btn-${tableNumber}`);
+                if (btn) {
+                    const originalText = btn.innerHTML;
+                    btn.classList.add('copied');
+                    btn.innerHTML = '<i class="fas fa-check"></i> Kopyalandı';
+                    
+                    setTimeout(() => {
+                        btn.classList.remove('copied');
+                        btn.innerHTML = originalText;
+                    }, 2000);
+                }
+                
+                showToast(`Masa ${tableNumber} linki kopyalandı`, 'success');
+            }).catch(() => {
+                showToast('Kopyalama uğursuz oldu', 'error');
+            });
+        }
+        
+        // Download QR code as PNG
+        function downloadQRCode(tableNumber) {
+            const container = document.getElementById(`qr-container-${tableNumber}`);
+            if (!container) return;
+            
+            const canvas = container.querySelector('canvas');
+            const img = container.querySelector('img');
+            
+            let dataUrl = null;
+            
+            if (canvas) {
+                dataUrl = canvas.toDataURL('image/png');
+            } else if (img) {
+                // If QRCode.js generated an image instead of canvas
+                const tempCanvas = document.createElement('canvas');
+                tempCanvas.width = img.naturalWidth || 160;
+                tempCanvas.height = img.naturalHeight || 160;
+                const ctx = tempCanvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                dataUrl = tempCanvas.toDataURL('image/png');
+            }
+            
+            if (dataUrl) {
+                const link = document.createElement('a');
+                link.href = dataUrl;
+                link.download = `istanbul-kafe-masa-${tableNumber}.png`;
+                link.click();
+                showToast(`Masa ${tableNumber} QR kodu yükləndi`, 'success');
+            } else {
+                showToast('QR kod hələ hazır deyil, bir az gözləyin', 'error');
+            }
+        }
+        
+        // Refresh grid
+        function refreshGrid() {
+            generateQRCodes();
+        }
+        
+        // Download all QR codes as a batch
+        function downloadAllQRCodes() {
+            currentQRData.forEach((data, index) => {
+                setTimeout(() => {
+                    downloadQRCode(data.tableNumber);
+                }, index * 300);
+            });
+        }
+        
+        // Print preparation reminder
+        window.addEventListener('beforeprint', () => {
+            const customUrl = siteUrlInput.value.trim();
+            if (!customUrl && ['localhost', '127.0.0.1'].includes(window.location.hostname)) {
+                const confirmPrint = confirm(
+                    'Diqqət! Localhost URL-ləri çap olunacaq.\n' +
+                    'Saytınızı real serverə yerləşdirdikdən sonra çap etməyiniz tövsiyə olunur.\n\n' +
+                    'Buna baxmayaraq çap etmək istəyirsiniz?'
+                );
+                if (!confirmPrint) {
+                    return false;
+                }
+            }
+        });
+        
+        // Global functions for HTML onclick
+        window.generateQRCodes = generateQRCodes;
+        window.refreshGrid = refreshGrid;
+        window.openMenuFromQR = openMenuFromQR;
+        window.copyQRUrl = copyQRUrl;
+        window.downloadQRCode = downloadQRCode;
+        window.downloadAllQRCodes = downloadAllQRCodes;
+        
+        // Console info
+        console.log(`
+        ╔══════════════════════════════════════════════╗
+        ║       İSTANBUL KAFE - QR KOD SİSTEMİ         ║
+        ╠══════════════════════════════════════════════╣
+        ║  Hər QR kod:                                 ║
+        ║  • Menyunu açır (index.html?table=N)         ║
+        ║  • Admin real-time masa nömrəsini görür      ║
+        ║  • Sifarişlər dəqiq masaya təyin olunur      ║
+        ╚══════════════════════════════════════════════╝
+        `);
+    </script>
+</body>
+</html>
