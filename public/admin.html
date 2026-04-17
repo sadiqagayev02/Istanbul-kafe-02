@@ -792,16 +792,21 @@
         }
 
         // Filter orders
-        function filterOrders(filter) {
-            currentFilter = filter;
-            
-            document.querySelectorAll('.filter-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            renderOrders();
+    function filterOrders(filter) {
+    currentFilter = filter;
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+        tab.classList.remove('active');
+        if (tab.textContent.includes(getFilterName(filter))) {
+            tab.classList.add('active');
         }
+    });
+    renderOrders();
+}
+
+function getFilterName(filter) {
+    const names = { all: 'Hamısı', pending: 'Gözləyən', preparing: 'Hazırlanan', ready: 'Hazır' };
+    return names[filter] || 'Hamısı';
+}
 
         // Update status
         function updateOrderStatus(orderId, status) {
@@ -884,7 +889,7 @@
                             ${order.items.map(item => `
                                 <div class="order-item">
                                     <span>${item.quantity}x ${item.name}</span>
-                                    <span>$${(item.price * item.quantity).toFixed(2)}</span>
+                                   <span>${(item.price * item.quantity).toFixed(2)} ₼</span>
                                 </div>
                             `).join('')}
                             ${order.note ? `
@@ -895,7 +900,7 @@
                         </div>
                         
                         <div class="order-total">
-                            Ümumi: $${order.total?.toFixed(2) || '0.00'}
+                            Ümumi: ${order.total?.toFixed(2) || '0.00'} ₼
                         </div>
                         
                         <div class="order-actions">
