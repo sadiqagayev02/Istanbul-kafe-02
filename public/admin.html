@@ -6,9 +6,6 @@
     <meta name="theme-color" content="#36BEFF">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="İstanbul Admin">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/706/706164.png">
-    <link rel="manifest" href="data:application/manifest+json,{'name':'İstanbul Kafe Admin','short_name':'Admin','icons':[{'src':'https://cdn-icons-png.flaticon.com/512/706/706164.png','sizes':'512x512','type':'image/png'}],'start_url':'/admin','display':'standalone','background_color':'#36BEFF','theme_color':'#36BEFF'}">
     <title>İstanbul Kafe | Admin Panel</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,6 +13,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
+        /* ... CSS EYNİDİR ... */
         * {
             margin: 0;
             padding: 0;
@@ -45,7 +43,6 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Login Screen */
         #loginScreen {
             position: fixed;
             inset: 0;
@@ -120,14 +117,12 @@
             font-size: 13px;
         }
 
-        /* Main Panel */
         #mainPanel {
             display: none;
             min-height: 100vh;
             background: #FAFEFF;
         }
 
-        /* Header */
         .admin-header {
             background: white;
             border-bottom: 1px solid var(--border);
@@ -203,14 +198,12 @@
             50% { opacity: 0.5; }
         }
 
-        /* Dashboard */
         .dashboard {
             max-width: 1200px;
             margin: 0 auto;
             padding: 16px;
         }
 
-        /* Statistics Cards */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -237,7 +230,6 @@
             color: var(--primary);
         }
 
-        /* Revenue Section */
         .revenue-section {
             background: white;
             border-radius: 14px;
@@ -306,11 +298,6 @@
             display: flex;
             align-items: center;
             gap: 4px;
-            transition: all 0.2s;
-        }
-
-        .reset-revenue-btn:active {
-            transform: scale(0.98);
         }
 
         .revenue-grid {
@@ -346,7 +333,6 @@
             color: var(--text-secondary);
         }
 
-        /* Orders Section */
         .orders-section {
             background: white;
             border-radius: 14px;
@@ -417,11 +403,6 @@
             gap: 4px;
         }
 
-        .clear-all-btn:active {
-            transform: scale(0.98);
-        }
-
-        /* Orders List */
         .orders-list {
             display: flex;
             flex-direction: column;
@@ -515,6 +496,23 @@
             font-size: 12px;
         }
 
+        .order-note {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed var(--border);
+            color: var(--text-secondary);
+            font-style: italic;
+            font-size: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+        }
+
+        .order-note i {
+            color: var(--warning);
+            margin-top: 2px;
+        }
+
         .order-total {
             text-align: right;
             font-weight: 700;
@@ -560,10 +558,6 @@
             gap: 4px;
         }
 
-        .delete-order-btn:active {
-            background: #c0392b;
-        }
-
         .status-pending { background: #FEF3C7; color: #D97706; }
         .status-preparing { background: #DBEAFE; color: #2563EB; }
         .status-ready { background: #D1FAE5; color: #059669; }
@@ -583,7 +577,6 @@
             opacity: 0.5;
         }
 
-        /* Notification Toast */
         .notification-toast {
             position: fixed;
             top: 16px;
@@ -629,31 +622,6 @@
             color: var(--text-secondary);
         }
 
-        /* Install Button */
-        .install-btn {
-            position: fixed;
-            bottom: 16px;
-            right: 16px;
-            z-index: 1000;
-            padding: 10px 16px;
-            background: white;
-            border-radius: 50px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            display: none;
-            align-items: center;
-            gap: 8px;
-            font-weight: 600;
-            font-size: 13px;
-            color: var(--primary);
-            border: 1px solid var(--border);
-            cursor: pointer;
-        }
-
-        .install-btn.show {
-            display: flex;
-        }
-
-        /* Mobile Responsive */
         @media (max-width: 600px) {
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -686,7 +654,6 @@
     </style>
 </head>
 <body>
-    <!-- Login Screen -->
     <div id="loginScreen">
         <div class="login-card">
             <div class="login-logo">
@@ -701,7 +668,6 @@
         </div>
     </div>
 
-    <!-- Main Panel -->
     <div id="mainPanel">
         <header class="admin-header">
             <div class="header-content">
@@ -815,19 +781,10 @@
     </div>
 
     <div class="notification-toast" id="toastContainer"></div>
-    
-    <button class="install-btn" id="installBtn" onclick="installApp()">
-        <i class="fas fa-download"></i>
-        Tətbiqi Yüklə
-    </button>
-
-    <audio id="notificationSound" preload="auto">
-        <source src="data:audio/wav;base64,UklGRlwAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YVoAAACAgICAf39/f39/f39/f3+AgICAf39/f39/f39/f3+AgICAf39/f39/f39/f3+AgICAf39/f39/f39/f38=" type="audio/wav">
-    </audio>
 
     <script>
         // ============================================
-        // ADMIN PANEL - STABİL + SIFIRLAMA + SƏS
+        // ADMIN PANEL - SƏS VƏ QEYD İŞLƏK
         // ============================================
         
         let ws = null;
@@ -837,9 +794,10 @@
         let currentPeriod = 1;
         let secret = localStorage.getItem('admin_secret') || '';
         let reconnectAttempts = 0;
-        let audioInitialized = false;
-        let deferredPrompt = null;
         const maxReconnectAttempts = 10;
+        
+        // Səs elementi
+        let notificationAudio = null;
 
         const loginScreen = document.getElementById('loginScreen');
         const mainPanel = document.getElementById('mainPanel');
@@ -848,57 +806,46 @@
         const connectionText = document.getElementById('connectionText');
         const ordersList = document.getElementById('ordersList');
         const toastContainer = document.getElementById('toastContainer');
-        const notificationSound = document.getElementById('notificationSound');
 
         // ============================================
-        // PWA INSTALL
+        // SƏS SİSTEMİ (SADƏ VƏ İŞLƏK)
         // ============================================
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            document.getElementById('installBtn').classList.add('show');
-        });
-
-        function installApp() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((result) => {
-                    if (result.outcome === 'accepted') {
-                        showNotification('✅ Tətbiq yüklənir', 'Ana ekrana əlavə edilir', 'success');
-                    }
-                    deferredPrompt = null;
-                    document.getElementById('installBtn').classList.remove('show');
-                });
-            } else {
-                showNotification('📱 Tətbiq', 'Brauzer menyusundan "Ana Ekrana Əlavə Et" seçin', 'info');
-            }
-        }
-
-        // ============================================
-        // AUDIO
-        // ============================================
-        function unlockAudio() {
-            if (audioInitialized) return;
+        function createNotificationAudio() {
+            if (notificationAudio) return;
             
-            const audio = document.getElementById('notificationSound');
-            if (audio) {
-                audio.volume = 0;
-                audio.play().then(() => {
-                    audio.pause();
-                    audio.currentTime = 0;
-                    audio.volume = 1;
-                    audioInitialized = true;
-                    console.log('🔊 Audio aktivləşdirildi');
-                }).catch(() => {});
-            }
+            notificationAudio = new Audio();
+            notificationAudio.src = 'data:audio/wav;base64,UklGRlwAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YVoAAACAgICAf39/f39/f39/f3+AgICAf39/f39/f39/f3+AgICAf39/f39/f39/f3+AgICAf39/f39/f39/f38=';
+            notificationAudio.volume = 1.0;
+            notificationAudio.preload = 'auto';
+            notificationAudio.load();
         }
         
         function playNotificationSound() {
-            unlockAudio();
-            const audio = document.getElementById('notificationSound');
-            if (audio) {
-                audio.currentTime = 0;
-                audio.play().catch(() => {});
+            createNotificationAudio();
+            
+            if (notificationAudio) {
+                notificationAudio.currentTime = 0;
+                notificationAudio.play().catch(e => {
+                    console.log('Səs çalınmadı, təkrar yoxlanır...');
+                    // İkinci cəhd
+                    const tempAudio = new Audio('data:audio/wav;base64,UklGRlwAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YVoAAACAgICAf39/f39/f39/f3+AgICAf39/f39/f39/f3+AgICAf39/f39/f39/f3+AgICAf39/f39/f39/f38=');
+                    tempAudio.volume = 1.0;
+                    tempAudio.play().catch(() => {});
+                });
+            }
+        }
+
+        // İlk toxunuşda səsi aktivləşdir
+        function unlockAudio() {
+            createNotificationAudio();
+            if (notificationAudio) {
+                notificationAudio.volume = 0;
+                notificationAudio.play().then(() => {
+                    notificationAudio.pause();
+                    notificationAudio.currentTime = 0;
+                    notificationAudio.volume = 1;
+                    console.log('🔊 Audio aktivləşdirildi');
+                }).catch(() => {});
             }
         }
 
@@ -908,6 +855,7 @@
         if (secret) {
             loginScreen.style.display = 'none';
             mainPanel.style.display = 'block';
+            createNotificationAudio();
             connectWebSocket();
         }
 
@@ -972,6 +920,8 @@
         }
 
         function handleWebSocketMessage(data) {
+            console.log('📨 Mesaj alındı:', data.type);
+            
             switch (data.type) {
                 case 'ADMIN_REGISTERED':
                     if (data.orders) {
@@ -988,13 +938,19 @@
                     break;
                     
                 case 'NEW_ORDER':
+                    console.log('🛎️ YENİ SİFARİŞ GƏLDİ!');
                     orders.unshift(data.order);
                     saveOrderToRevenue(data.order);
                     renderOrders();
                     updateStats();
                     updateRevenueDisplay();
                     
-                    if (data.notification?.sound) playNotificationSound();
+                    // SƏS ÇAL
+                    if (data.notification?.sound) {
+                        console.log('🔊 Səs çalınır...');
+                        playNotificationSound();
+                    }
+                    
                     showNotification('🛎️ Yeni Sifariş!', data.notification?.body || 'Yeni sifariş gəldi', 'new-order');
                     break;
                     
@@ -1041,10 +997,6 @@
             }
             
             localStorage.setItem('istanbulDailyRevenue', JSON.stringify(dailyRevenue));
-            
-            if (ws && ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify({ type: 'UPDATE_REVENUE', revenue: dailyRevenue, secret }));
-            }
         }
 
         function resetRevenue() {
@@ -1053,10 +1005,6 @@
             dailyRevenue = {};
             localStorage.setItem('istanbulDailyRevenue', JSON.stringify(dailyRevenue));
             updateRevenueDisplay();
-            
-            if (ws && ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify({ type: 'RESET_REVENUE', secret }));
-            }
             
             showNotification('Gəlir Sıfırlandı', 'Statistika sıfırlandı', 'success');
         }
@@ -1188,6 +1136,14 @@
                                     <span>${(item.price * item.quantity).toFixed(2)} ₼</span>
                                 </div>
                             `).join('')}
+                            
+                            <!-- 🟢 QEYD BURADA GÖRÜNƏCƏK -->
+                            ${order.note ? `
+                                <div class="order-note">
+                                    <i class="fas fa-pencil-alt"></i>
+                                    <span><strong>Qeyd:</strong> ${order.note}</span>
+                                </div>
+                            ` : ''}
                         </div>
                         
                         <div class="order-total">Ümumi: ${order.total?.toFixed(2) || '0.00'} ₼</div>
@@ -1230,7 +1186,7 @@
             setTimeout(() => toast.remove(), 4000);
         }
 
-        // Audio unlock on first touch
+        // İlk toxunuşda səsi aktivləşdir
         ['touchstart', 'click'].forEach(ev => {
             document.body.addEventListener(ev, unlockAudio, { once: false, passive: true });
         });
@@ -1248,9 +1204,8 @@
         window.changePeriod = changePeriod;
         window.resetRevenue = resetRevenue;
         window.unlockAudio = unlockAudio;
-        window.installApp = installApp;
 
-        console.log('🍽️ İstanbul Kafe Admin Panel - Stabil Versiya');
+        console.log('🍽️ İstanbul Kafe Admin Panel - Səs və Qeyd İşlək');
     </script>
 </body>
 </html>
