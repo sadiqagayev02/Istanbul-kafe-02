@@ -12,7 +12,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    </head>
     <style>
         * {
             margin: 0;
@@ -43,7 +42,6 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Login Screen */
         #loginScreen {
             position: fixed;
             inset: 0;
@@ -118,14 +116,12 @@
             font-size: 13px;
         }
 
-        /* Main Panel */
         #mainPanel {
             display: none;
             min-height: 100vh;
             background: #FAFEFF;
         }
 
-        /* Header */
         .admin-header {
             background: white;
             border-bottom: 1px solid var(--border);
@@ -201,14 +197,12 @@
             50% { opacity: 0.5; }
         }
 
-        /* Dashboard */
         .dashboard {
             max-width: 1200px;
             margin: 0 auto;
             padding: 16px;
         }
 
-        /* Statistics Cards */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -235,7 +229,6 @@
             color: var(--primary);
         }
 
-        /* Revenue Section */
         .revenue-section {
             background: white;
             border-radius: 14px;
@@ -304,11 +297,6 @@
             display: flex;
             align-items: center;
             gap: 4px;
-            transition: all 0.2s;
-        }
-
-        .reset-revenue-btn:active {
-            transform: scale(0.98);
         }
 
         .revenue-grid {
@@ -344,7 +332,6 @@
             color: var(--text-secondary);
         }
 
-        /* Orders Section */
         .orders-section {
             background: white;
             border-radius: 14px;
@@ -415,11 +402,6 @@
             gap: 4px;
         }
 
-        .clear-all-btn:active {
-            transform: scale(0.98);
-        }
-
-        /* Orders List */
         .orders-list {
             display: flex;
             flex-direction: column;
@@ -506,28 +488,28 @@
             border-radius: 8px;
         }
 
-        .order-note {
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 1px dashed var(--border);
-    color: var(--text-secondary);
-    font-style: italic;
-    font-size: 12px;
-    display: flex;
-    align-items: flex-start;
-    gap: 6px;
-}
-
-.order-note i {
-    color: var(--warning);
-    margin-top: 2px;
-}
-
         .order-item {
             display: flex;
             justify-content: space-between;
             padding: 3px 0;
             font-size: 12px;
+        }
+
+        .order-note {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed var(--border);
+            color: var(--text-secondary);
+            font-style: italic;
+            font-size: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+        }
+
+        .order-note i {
+            color: var(--warning);
+            margin-top: 2px;
         }
 
         .order-total {
@@ -575,10 +557,6 @@
             gap: 4px;
         }
 
-        .delete-order-btn:active {
-            background: #c0392b;
-        }
-
         .status-pending { background: #FEF3C7; color: #D97706; }
         .status-preparing { background: #DBEAFE; color: #2563EB; }
         .status-ready { background: #D1FAE5; color: #059669; }
@@ -598,7 +576,6 @@
             opacity: 0.5;
         }
 
-        /* Notification Toast */
         .notification-toast {
             position: fixed;
             top: 16px;
@@ -644,31 +621,20 @@
             color: var(--text-secondary);
         }
 
-        /* Install Button */
-        .install-btn {
-            position: fixed;
-            bottom: 16px;
-            right: 16px;
-            z-index: 1000;
-            padding: 10px 16px;
-            background: white;
+        .sound-test-btn {
+            padding: 6px 12px;
             border-radius: 50px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            display: none;
-            align-items: center;
-            gap: 8px;
+            font-size: 12px;
             font-weight: 600;
-            font-size: 13px;
-            color: var(--primary);
-            border: 1px solid var(--border);
             cursor: pointer;
-        }
-
-        .install-btn.show {
+            background: var(--success);
+            color: white;
+            border: none;
             display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
-        /* Mobile Responsive */
         @media (max-width: 600px) {
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -699,6 +665,7 @@
             }
         }
     </style>
+</head>
 <body>
     <div id="loginScreen">
         <div class="login-card">
@@ -711,6 +678,9 @@
                 <i class="fas fa-sign-in-alt"></i> Daxil Ol
             </button>
             <div id="loginError" class="login-error"></div>
+            <button class="sound-test-btn" onclick="testSound()" style="margin-top: 16px; width: 100%;">
+                <i class="fas fa-volume-up"></i> Səsi Test Et
+            </button>
         </div>
     </div>
 
@@ -730,6 +700,10 @@
                         <span class="status-dot" id="connectionStatus"></span>
                         <span id="connectionText">Bağlanır...</span>
                     </div>
+                    <button class="stat-badge" onclick="testSound()" style="cursor: pointer;">
+                        <i class="fas fa-volume-up"></i>
+                        Test
+                    </button>
                     <button class="stat-badge" onclick="logout()" style="cursor: pointer;">
                         <i class="fas fa-sign-out-alt"></i>
                         Çıxış
@@ -830,7 +804,7 @@
 
     <script>
         // ============================================
-        // ADMIN PANEL - SƏS VƏ QEYD İŞLƏK
+        // ADMIN PANEL - SƏS 100% İŞLƏK
         // ============================================
         
         let ws = null;
@@ -842,8 +816,8 @@
         let reconnectAttempts = 0;
         const maxReconnectAttempts = 10;
         
-        // Səs elementi
-        let notificationAudio = null;
+        // Səs - sadə və işlək
+        let audioEnabled = false;
 
         const loginScreen = document.getElementById('loginScreen');
         const mainPanel = document.getElementById('mainPanel');
@@ -854,45 +828,38 @@
         const toastContainer = document.getElementById('toastContainer');
 
         // ============================================
-        // SƏS SİSTEMİ (SADƏ VƏ İŞLƏK)
+        // SƏS TEST VƏ AKTİVLƏŞDİRMƏ
         // ============================================
-        function createNotificationAudio() {
-            if (notificationAudio) return;
+        function testSound() {
+            const audio = new Audio('data:audio/wav;base64,UklGRlwAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YVoAAACAgICAf39/f39/f39/f3+AgICAf39/f39/f39/f3+AgICAf39/f39/f39/f3+AgICAf39/f39/f39/f38=');
+            audio.volume = 1.0;
             
-            notificationAudio = new Audio();
-            notificationAudio.src = 'data:audio/wav;base64,UklGRlwAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YVoAAACAgICAf39/f39/f39/f3+AgICAf39/f39/f39/f3+AgICAf39/f39/f39/f3+AgICAf39/f39/f39/f38=';
-            notificationAudio.volume = 1.0;
-            notificationAudio.preload = 'auto';
-            notificationAudio.load();
-        }
-        
-        function playNotificationSound() {
-            createNotificationAudio();
-            
-            if (notificationAudio) {
-                notificationAudio.currentTime = 0;
-                notificationAudio.play().catch(e => {
-                    console.log('Səs çalınmadı, təkrar yoxlanır...');
-                    // İkinci cəhd
-                    const tempAudio = new Audio('data:audio/wav;base64,UklGRlwAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YVoAAACAgICAf39/f39/f39/f3+AgICAf39/f39/f39/f3+AgICAf39/f39/f39/f3+AgICAf39/f39/f39/f38=');
-                    tempAudio.volume = 1.0;
-                    tempAudio.play().catch(() => {});
-                });
-            }
+            audio.play().then(() => {
+                audioEnabled = true;
+                console.log('🔊 Səs UĞURLA çalındı!');
+                showNotification('✅ Səs İşləyir!', 'Bildiriş səsləri aktivdir', 'success');
+            }).catch(e => {
+                audioEnabled = false;
+                console.log('❌ Səs çalınmadı:', e);
+                showNotification('❌ Səs İcazəsi Yoxdur', 'Brauzer səsə icazə vermədi. Səhifəni yeniləyin və ya brauzer ayarlarını yoxlayın.', 'error');
+            });
         }
 
-        // İlk toxunuşda səsi aktivləşdir
-        function unlockAudio() {
-            createNotificationAudio();
-            if (notificationAudio) {
-                notificationAudio.volume = 0;
-                notificationAudio.play().then(() => {
-                    notificationAudio.pause();
-                    notificationAudio.currentTime = 0;
-                    notificationAudio.volume = 1;
-                    console.log('🔊 Audio aktivləşdirildi');
-                }).catch(() => {});
+        function playNotificationSound() {
+            if (!audioEnabled) {
+                console.log('🔇 Səs aktiv deyil, test et butonuna basın');
+                return;
             }
+            
+            const audio = new Audio('data:audio/wav;base64,UklGRlwAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YVoAAACAgICAf39/f39/f39/f3+AgICAf39/f39/f39/f3+AgICAf39/f39/f39/f3+AgICAf39/f39/f39/f38=');
+            audio.volume = 1.0;
+            
+            audio.play().then(() => {
+                console.log('🔊 Bildiriş səsi çalındı');
+            }).catch(e => {
+                console.log('❌ Bildiriş səsi çalınmadı:', e);
+                audioEnabled = false;
+            });
         }
 
         // ============================================
@@ -901,15 +868,12 @@
         if (secret) {
             loginScreen.style.display = 'none';
             mainPanel.style.display = 'block';
-            createNotificationAudio();
             connectWebSocket();
         }
 
         function login() {
             const inputSecret = document.getElementById('secretInput').value;
             if (!inputSecret) { loginError.textContent = 'Şifrə daxil edin'; return; }
-            
-            unlockAudio();
             
             fetch('/api/admin/auth', {
                 method: 'POST',
@@ -966,7 +930,7 @@
         }
 
         function handleWebSocketMessage(data) {
-            console.log('📨 Mesaj alındı:', data.type);
+            console.log('📨 Mesaj:', data.type);
             
             switch (data.type) {
                 case 'ADMIN_REGISTERED':
@@ -984,7 +948,7 @@
                     break;
                     
                 case 'NEW_ORDER':
-                    console.log('🛎️ YENİ SİFARİŞ GƏLDİ!');
+                    console.log('🛎️ YENİ SİFARİŞ!');
                     orders.unshift(data.order);
                     saveOrderToRevenue(data.order);
                     renderOrders();
@@ -993,7 +957,6 @@
                     
                     // SƏS ÇAL
                     if (data.notification?.sound) {
-                        console.log('🔊 Səs çalınır...');
                         playNotificationSound();
                     }
                     
@@ -1008,12 +971,10 @@
                 case 'ORDER_DELETED':
                     orders = orders.filter(o => o.id !== data.orderId);
                     renderOrders(); updateStats();
-                    showNotification('Sifariş Silindi', `#${data.orderId} silindi`, 'info');
                     break;
                     
                 case 'ORDERS_CLEARED':
                     orders = []; renderOrders(); updateStats();
-                    showNotification('Sifarişlər Silindi', 'Bütün sifarişlər silindi', 'info');
                     break;
                     
                 case 'REVENUE_UPDATED':
@@ -1052,6 +1013,10 @@
             localStorage.setItem('istanbulDailyRevenue', JSON.stringify(dailyRevenue));
             updateRevenueDisplay();
             
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ type: 'RESET_REVENUE', secret }));
+            }
+            
             showNotification('Gəlir Sıfırlandı', 'Statistika sıfırlandı', 'success');
         }
 
@@ -1064,7 +1029,6 @@
             
             orders = orders.filter(o => o.id !== orderId);
             renderOrders(); updateStats();
-            showNotification('Sifariş Silindi', `#${orderId} silindi`, 'info');
         }
 
         function clearAllOrders() {
@@ -1075,7 +1039,6 @@
             }
             
             orders = []; renderOrders(); updateStats();
-            showNotification('Sifarişlər Silindi', 'Bütün sifarişlər təmizləndi', 'success');
         }
 
         function calculateRevenue(period) {
@@ -1136,7 +1099,6 @@
             if (ws && ws.readyState === WebSocket.OPEN) {
                 ws.send(JSON.stringify({ type: 'UPDATE_ORDER_STATUS', orderId, status, secret }));
             }
-            showNotification('Status Yeniləndi', `Sifariş statusu: ${status}`, 'success');
         }
 
         function renderOrders() {
@@ -1154,7 +1116,7 @@
                 const isTable = order.table || order.orderType === 'table';
                 
                 return `
-                    <div class="order-card" onclick="unlockAudio()">
+                    <div class="order-card">
                         <div class="order-header">
                             <span class="order-id">#${order.id}</span>
                             <span class="order-time"><i class="far fa-clock"></i> ${time}</span>
@@ -1183,7 +1145,6 @@
                                 </div>
                             `).join('')}
                             
-                            <!-- 🟢 QEYD BURADA GÖRÜNƏCƏK -->
                             ${order.note ? `
                                 <div class="order-note">
                                     <i class="fas fa-pencil-alt"></i>
@@ -1232,11 +1193,6 @@
             setTimeout(() => toast.remove(), 4000);
         }
 
-        // İlk toxunuşda səsi aktivləşdir
-        ['touchstart', 'click'].forEach(ev => {
-            document.body.addEventListener(ev, unlockAudio, { once: false, passive: true });
-        });
-
         document.getElementById('secretInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') login();
         });
@@ -1249,9 +1205,9 @@
         window.clearAllOrders = clearAllOrders;
         window.changePeriod = changePeriod;
         window.resetRevenue = resetRevenue;
-        window.unlockAudio = unlockAudio;
+        window.testSound = testSound;
 
-        console.log('🍽️ İstanbul Kafe Admin Panel - Səs və Qeyd İşlək');
+        console.log('🍽️ İstanbul Kafe Admin Panel - Hazır');
     </script>
 </body>
 </html>
