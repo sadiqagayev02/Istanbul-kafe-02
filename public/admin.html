@@ -12,8 +12,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
+    </head>
     <style>
-        /* ... CSS EYNİDİR ... */
         * {
             margin: 0;
             padding: 0;
@@ -43,6 +43,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
+        /* Login Screen */
         #loginScreen {
             position: fixed;
             inset: 0;
@@ -117,12 +118,14 @@
             font-size: 13px;
         }
 
+        /* Main Panel */
         #mainPanel {
             display: none;
             min-height: 100vh;
             background: #FAFEFF;
         }
 
+        /* Header */
         .admin-header {
             background: white;
             border-bottom: 1px solid var(--border);
@@ -198,12 +201,14 @@
             50% { opacity: 0.5; }
         }
 
+        /* Dashboard */
         .dashboard {
             max-width: 1200px;
             margin: 0 auto;
             padding: 16px;
         }
 
+        /* Statistics Cards */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -230,6 +235,7 @@
             color: var(--primary);
         }
 
+        /* Revenue Section */
         .revenue-section {
             background: white;
             border-radius: 14px;
@@ -298,6 +304,11 @@
             display: flex;
             align-items: center;
             gap: 4px;
+            transition: all 0.2s;
+        }
+
+        .reset-revenue-btn:active {
+            transform: scale(0.98);
         }
 
         .revenue-grid {
@@ -333,6 +344,7 @@
             color: var(--text-secondary);
         }
 
+        /* Orders Section */
         .orders-section {
             background: white;
             border-radius: 14px;
@@ -403,6 +415,11 @@
             gap: 4px;
         }
 
+        .clear-all-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Orders List */
         .orders-list {
             display: flex;
             flex-direction: column;
@@ -496,23 +513,6 @@
             font-size: 12px;
         }
 
-        .order-note {
-            margin-top: 8px;
-            padding-top: 8px;
-            border-top: 1px dashed var(--border);
-            color: var(--text-secondary);
-            font-style: italic;
-            font-size: 12px;
-            display: flex;
-            align-items: flex-start;
-            gap: 6px;
-        }
-
-        .order-note i {
-            color: var(--warning);
-            margin-top: 2px;
-        }
-
         .order-total {
             text-align: right;
             font-weight: 700;
@@ -558,6 +558,10 @@
             gap: 4px;
         }
 
+        .delete-order-btn:active {
+            background: #c0392b;
+        }
+
         .status-pending { background: #FEF3C7; color: #D97706; }
         .status-preparing { background: #DBEAFE; color: #2563EB; }
         .status-ready { background: #D1FAE5; color: #059669; }
@@ -577,6 +581,7 @@
             opacity: 0.5;
         }
 
+        /* Notification Toast */
         .notification-toast {
             position: fixed;
             top: 16px;
@@ -622,6 +627,31 @@
             color: var(--text-secondary);
         }
 
+        /* Install Button */
+        .install-btn {
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+            z-index: 1000;
+            padding: 10px 16px;
+            background: white;
+            border-radius: 50px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            display: none;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--primary);
+            border: 1px solid var(--border);
+            cursor: pointer;
+        }
+
+        .install-btn.show {
+            display: flex;
+        }
+
+        /* Mobile Responsive */
         @media (max-width: 600px) {
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -652,7 +682,6 @@
             }
         }
     </style>
-</head>
 <body>
     <div id="loginScreen">
         <div class="login-card">
