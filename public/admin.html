@@ -802,412 +802,448 @@
 
     <div class="notification-toast" id="toastContainer"></div>
 
-    <script>
-        // ============================================
-        // ADMIN PANEL - SƏS 100% İŞLƏK
-        // ============================================
-        
-        let ws = null;
-        let orders = [];
-        let dailyRevenue = JSON.parse(localStorage.getItem('istanbulDailyRevenue') || '{}');
-        let currentFilter = 'all';
-        let currentPeriod = 1;
-        let secret = localStorage.getItem('admin_secret') || '';
-        let reconnectAttempts = 0;
-        const maxReconnectAttempts = 10;
-        
-        // Səs - sadə və işlək
-        let audioEnabled = false;
+  <script>
+    // ============================================
+    // ADMIN PANEL - TAM SCRIPT (SƏS İŞLƏK)
+    // ============================================
+    
+    let ws = null;
+    let orders = [];
+    let dailyRevenue = JSON.parse(localStorage.getItem('istanbulDailyRevenue') || '{}');
+    let currentFilter = 'all';
+    let currentPeriod = 1;
+    let secret = localStorage.getItem('admin_secret') || '';
+    let reconnectAttempts = 0;
+    const maxReconnectAttempts = 10;
+    
+    // Səs sistemi - Web Audio API
+    let audioContext = null;
+    let audioInitialized = false;
 
-        const loginScreen = document.getElementById('loginScreen');
-        const mainPanel = document.getElementById('mainPanel');
-        const loginError = document.getElementById('loginError');
-        const connectionStatus = document.getElementById('connectionStatus');
-        const connectionText = document.getElementById('connectionText');
-        const ordersList = document.getElementById('ordersList');
-        const toastContainer = document.getElementById('toastContainer');
+    const loginScreen = document.getElementById('loginScreen');
+    const mainPanel = document.getElementById('mainPanel');
+    const loginError = document.getElementById('loginError');
+    const connectionStatus = document.getElementById('connectionStatus');
+    const connectionText = document.getElementById('connectionText');
+    const ordersList = document.getElementById('ordersList');
+    const toastContainer = document.getElementById('toastContainer');
 
-        // ============================================
-        // SƏS TEST VƏ AKTİVLƏŞDİRMƏ
-        // ============================================
-        function testSound() {
-            const audio = new Audio('data:audio/wav;base64,UklGRlwAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YVoAAACAgICAf39/f39/f39/f3+AgICAf39/f39/f39/f3+AgICAf39/f39/f39/f3+AgICAf39/f39/f39/f38=');
-            audio.volume = 1.0;
-            
-            audio.play().then(() => {
-                audioEnabled = true;
-                console.log('🔊 Səs UĞURLA çalındı!');
-                showNotification('✅ Səs İşləyir!', 'Bildiriş səsləri aktivdir', 'success');
-            }).catch(e => {
-                audioEnabled = false;
-                console.log('❌ Səs çalınmadı:', e);
-                showNotification('❌ Səs İcazəsi Yoxdur', 'Brauzer səsə icazə vermədi. Səhifəni yeniləyin və ya brauzer ayarlarını yoxlayın.', 'error');
-            });
+    // ============================================
+    // SƏS SİSTEMİ (WEB AUDIO API)
+    // ============================================
+    function initAudio() {
+        try { 
+            audioContext = new (window.AudioContext || window.webkitAudioContext)(); 
+        } catch (e) {}
+    }
+    
+    function unlockAudio() {
+        if (audioInitialized) return;
+        
+        if (!audioContext) {
+            initAudio();
         }
+        
+        if (audioContext && audioContext.state === 'suspended') {
+            audioContext.resume().then(() => {
+                console.log('🔊 Audio aktivləşdirildi');
+                audioInitialized = true;
+            }).catch(e => console.log('Audio aktivləşmədi:', e));
+        } else if (audioContext && audioContext.state === 'running') {
+            audioInitialized = true;
+        }
+    }
+    
+    function playWebAudioSound() {
+        if (!audioContext) return;
+        
+        try {
+            const now = audioContext.currentTime;
+            const osc1 = audioContext.createOscillator();
+            const osc2 = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc1.type = 'sine'; osc1.frequency.value = 800;
+            osc2.type = 'sine'; osc2.frequency.value = 1000;
+            gain.gain.setValueAtTime(0.3, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+            osc1.connect(gain); osc2.connect(gain);
+            gain.connect(audioContext.destination);
+            osc1.start(); osc2.start();
+            osc1.stop(now + 0.4); osc2.stop(now + 0.4);
+        } catch (e) {}
+    }
+    
+    function playNotificationSound() {
+        unlockAudio();
+        
+        if (!audioContext) {
+            initAudio();
+            if (!audioContext) return;
+        }
+        
+        if (audioContext.state === 'suspended') {
+            audioContext.resume().then(() => {
+                playWebAudioSound();
+            }).catch(() => {});
+        } else {
+            playWebAudioSound();
+        }
+    }
 
-        function playNotificationSound() {
-            if (!audioEnabled) {
-                console.log('🔇 Səs aktiv deyil, test et butonuna basın');
-                return;
+    // ============================================
+    // LOGIN / WEBSOCKET
+    // ============================================
+    if (secret) {
+        loginScreen.style.display = 'none';
+        mainPanel.style.display = 'block';
+        initAudio();
+        connectWebSocket();
+    }
+
+    function login() {
+        const inputSecret = document.getElementById('secretInput').value;
+        if (!inputSecret) { loginError.textContent = 'Şifrə daxil edin'; return; }
+        
+        unlockAudio();
+        
+        fetch('/api/admin/auth', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ secret: inputSecret })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                secret = inputSecret;
+                localStorage.setItem('admin_secret', secret);
+                loginScreen.style.display = 'none';
+                mainPanel.style.display = 'block';
+                connectWebSocket();
+            } else {
+                loginError.textContent = 'Səhv şifrə';
             }
-            
-            const audio = new Audio('data:audio/wav;base64,UklGRlwAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YVoAAACAgICAf39/f39/f39/f3+AgICAf39/f39/f39/f3+AgICAf39/f39/f39/f3+AgICAf39/f39/f39/f38=');
-            audio.volume = 1.0;
-            
-            audio.play().then(() => {
-                console.log('🔊 Bildiriş səsi çalındı');
-            }).catch(e => {
-                console.log('❌ Bildiriş səsi çalınmadı:', e);
-                audioEnabled = false;
-            });
-        }
+        })
+        .catch(() => { loginError.textContent = 'Serverə qoşulmaq mümkün olmadı'; });
+    }
 
-        // ============================================
-        // LOGIN / WEBSOCKET
-        // ============================================
-        if (secret) {
-            loginScreen.style.display = 'none';
-            mainPanel.style.display = 'block';
-            connectWebSocket();
-        }
+    function logout() {
+        localStorage.removeItem('admin_secret');
+        secret = '';
+        if (ws) ws.close();
+        loginScreen.style.display = 'flex';
+        mainPanel.style.display = 'none';
+        document.getElementById('secretInput').value = '';
+    }
 
-        function login() {
-            const inputSecret = document.getElementById('secretInput').value;
-            if (!inputSecret) { loginError.textContent = 'Şifrə daxil edin'; return; }
-            
-            fetch('/api/admin/auth', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ secret: inputSecret })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    secret = inputSecret;
-                    localStorage.setItem('admin_secret', secret);
-                    loginScreen.style.display = 'none';
-                    mainPanel.style.display = 'block';
-                    connectWebSocket();
-                } else {
-                    loginError.textContent = 'Səhv şifrə';
-                }
-            })
-            .catch(() => { loginError.textContent = 'Serverə qoşulmaq mümkün olmadı'; });
-        }
+    function connectWebSocket() {
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        ws = new WebSocket(`${protocol}//${window.location.host}`);
+        
+        ws.onopen = () => {
+            connectionStatus.classList.remove('disconnected');
+            connectionText.textContent = 'Online';
+            reconnectAttempts = 0;
+            ws.send(JSON.stringify({ type: 'REGISTER_ADMIN', secret }));
+        };
+        
+        ws.onmessage = (event) => {
+            try { handleWebSocketMessage(JSON.parse(event.data)); } catch (e) {}
+        };
+        
+        ws.onclose = () => {
+            connectionStatus.classList.add('disconnected');
+            connectionText.textContent = 'Offline';
+            if (reconnectAttempts < maxReconnectAttempts) {
+                reconnectAttempts++;
+                setTimeout(connectWebSocket, 3000);
+            }
+        };
+    }
 
-        function logout() {
-            localStorage.removeItem('admin_secret');
-            secret = '';
-            if (ws) ws.close();
-            loginScreen.style.display = 'flex';
-            mainPanel.style.display = 'none';
-            document.getElementById('secretInput').value = '';
-        }
-
-        function connectWebSocket() {
-            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-            ws = new WebSocket(`${protocol}//${window.location.host}`);
-            
-            ws.onopen = () => {
-                connectionStatus.classList.remove('disconnected');
-                connectionText.textContent = 'Online';
-                reconnectAttempts = 0;
-                ws.send(JSON.stringify({ type: 'REGISTER_ADMIN', secret }));
-            };
-            
-            ws.onmessage = (event) => {
-                try { handleWebSocketMessage(JSON.parse(event.data)); } catch (e) {}
-            };
-            
-            ws.onclose = () => {
-                connectionStatus.classList.add('disconnected');
-                connectionText.textContent = 'Offline';
-                if (reconnectAttempts < maxReconnectAttempts) {
-                    reconnectAttempts++;
-                    setTimeout(connectWebSocket, 3000);
-                }
-            };
-        }
-
-        function handleWebSocketMessage(data) {
-            console.log('📨 Mesaj:', data.type);
-            
-            switch (data.type) {
-                case 'ADMIN_REGISTERED':
-                    if (data.orders) {
-                        orders = data.orders;
-                        renderOrders();
-                        updateStats();
-                    }
-                    if (data.revenue) {
-                        dailyRevenue = data.revenue;
-                        localStorage.setItem('istanbulDailyRevenue', JSON.stringify(dailyRevenue));
-                    }
-                    updateRevenueDisplay();
-                    showNotification('Admin Panel', 'Bağlantı quruldu', 'success');
-                    break;
-                    
-                case 'NEW_ORDER':
-                    console.log('🛎️ YENİ SİFARİŞ!');
-                    orders.unshift(data.order);
-                    saveOrderToRevenue(data.order);
+    function handleWebSocketMessage(data) {
+        console.log('📨 Mesaj:', data.type);
+        
+        switch (data.type) {
+            case 'ADMIN_REGISTERED':
+                if (data.orders) {
+                    orders = data.orders;
                     renderOrders();
                     updateStats();
-                    updateRevenueDisplay();
-                    
-                    // SƏS ÇAL
-                    if (data.notification?.sound) {
-                        playNotificationSound();
-                    }
-                    
-                    showNotification('🛎️ Yeni Sifariş!', data.notification?.body || 'Yeni sifariş gəldi', 'new-order');
-                    break;
-                    
-                case 'ORDER_UPDATED':
-                    const idx = orders.findIndex(o => o.id === data.order.id);
-                    if (idx !== -1) { orders[idx] = data.order; renderOrders(); updateStats(); }
-                    break;
-                    
-                case 'ORDER_DELETED':
-                    orders = orders.filter(o => o.id !== data.orderId);
-                    renderOrders(); updateStats();
-                    break;
-                    
-                case 'ORDERS_CLEARED':
-                    orders = []; renderOrders(); updateStats();
-                    break;
-                    
-                case 'REVENUE_UPDATED':
+                }
+                if (data.revenue) {
                     dailyRevenue = data.revenue;
                     localStorage.setItem('istanbulDailyRevenue', JSON.stringify(dailyRevenue));
-                    updateRevenueDisplay();
-                    break;
-            }
-        }
-
-        function saveOrderToRevenue(order) {
-            const date = new Date(order.timestamp).toISOString().split('T')[0];
-            const hour = new Date(order.timestamp).getHours();
-            if (hour < 9 || hour >= 21) return;
-            
-            if (!dailyRevenue[date]) {
-                dailyRevenue[date] = { total: 0, table: 0, delivery: 0, tableCount: 0, deliveryCount: 0 };
-            }
-            
-            dailyRevenue[date].total += order.total || 0;
-            if (order.orderType === 'table' || order.table) {
-                dailyRevenue[date].table += order.total || 0;
-                dailyRevenue[date].tableCount++;
-            } else {
-                dailyRevenue[date].delivery += order.total || 0;
-                dailyRevenue[date].deliveryCount++;
-            }
-            
-            localStorage.setItem('istanbulDailyRevenue', JSON.stringify(dailyRevenue));
-        }
-
-        function resetRevenue() {
-            if (!confirm('Gəlir statistikasını sıfırlamaq istədiyinizə əminsiniz?')) return;
-            
-            dailyRevenue = {};
-            localStorage.setItem('istanbulDailyRevenue', JSON.stringify(dailyRevenue));
-            updateRevenueDisplay();
-            
-            if (ws && ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify({ type: 'RESET_REVENUE', secret }));
-            }
-            
-            showNotification('Gəlir Sıfırlandı', 'Statistika sıfırlandı', 'success');
-        }
-
-        function deleteOrder(orderId) {
-            if (!confirm('Bu sifarişi silmək istədiyinizə əminsiniz?')) return;
-            
-            if (ws && ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify({ type: 'DELETE_ORDER', orderId, secret }));
-            }
-            
-            orders = orders.filter(o => o.id !== orderId);
-            renderOrders(); updateStats();
-        }
-
-        function clearAllOrders() {
-            if (!confirm('BÜTÜN sifarişləri silmək istədiyinizə əminsiniz?')) return;
-            
-            if (ws && ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify({ type: 'CLEAR_ORDERS', secret }));
-            }
-            
-            orders = []; renderOrders(); updateStats();
-        }
-
-        function calculateRevenue(period) {
-            const dates = [];
-            for (let i = 0; i < period; i++) {
-                const d = new Date();
-                d.setDate(d.getDate() - i);
-                dates.push(d.toISOString().split('T')[0]);
-            }
-            
-            let total = 0, table = 0, delivery = 0, tableCount = 0, deliveryCount = 0;
-            
-            dates.forEach(date => {
-                if (dailyRevenue[date]) {
-                    total += dailyRevenue[date].total || 0;
-                    table += dailyRevenue[date].table || 0;
-                    delivery += dailyRevenue[date].delivery || 0;
-                    tableCount += dailyRevenue[date].tableCount || 0;
-                    deliveryCount += dailyRevenue[date].deliveryCount || 0;
                 }
-            });
-            
-            return { total, table, delivery, tableCount, deliveryCount };
-        }
-
-        function updateRevenueDisplay() {
-            const rev = calculateRevenue(currentPeriod);
-            document.getElementById('totalRevenue').textContent = `${rev.total.toFixed(2)} ₼`;
-            document.getElementById('tableRevenue').textContent = `${rev.table.toFixed(2)} ₼`;
-            document.getElementById('deliveryRevenue').textContent = `${rev.delivery.toFixed(2)} ₼`;
-            document.getElementById('tableOrderCount').textContent = rev.tableCount;
-            document.getElementById('deliveryOrderCount').textContent = rev.deliveryCount;
-        }
-
-        function changePeriod(period) {
-            currentPeriod = period;
-            document.querySelectorAll('.period-btn').forEach((btn, i) => {
-                btn.classList.toggle('active', (i === 0 && period === 1) || (i === 1 && period === 3) || (i === 2 && period === 7));
-            });
-            updateRevenueDisplay();
-        }
-
-        function filterOrders(filter) {
-            currentFilter = filter;
-            document.querySelectorAll('.filter-tab').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.textContent.includes(getFilterName(filter))) btn.classList.add('active');
-            });
-            renderOrders();
-        }
-
-        function getFilterName(filter) {
-            const names = { all: 'Hamısı', pending: 'Gözləyən', preparing: 'Hazırlanan', ready: 'Hazır' };
-            return names[filter] || 'Hamısı';
-        }
-
-        function updateOrderStatus(orderId, status) {
-            if (ws && ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify({ type: 'UPDATE_ORDER_STATUS', orderId, status, secret }));
-            }
-        }
-
-        function renderOrders() {
-            let filteredOrders = orders.filter(o => currentFilter === 'all' || o.status === currentFilter);
-            
-            if (filteredOrders.length === 0) {
-                ordersList.innerHTML = `<div class="empty-state"><i class="fas fa-inbox"></i><h3>Sifariş yoxdur</h3></div>`;
-                return;
-            }
-            
-            ordersList.innerHTML = filteredOrders.map(order => {
-                const statusClass = `status-${order.status}`;
-                const statusText = { pending: 'Gözləyir', preparing: 'Hazırlanır', ready: 'Hazırdır', delivered: 'Çatdırıldı', completed: 'Tamamlandı', cancelled: 'Ləğv edildi' }[order.status] || order.status;
-                const time = new Date(order.timestamp).toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' });
-                const isTable = order.table || order.orderType === 'table';
+                updateRevenueDisplay();
+                showNotification('Admin Panel', 'Bağlantı quruldu', 'success');
+                break;
                 
-                return `
-                    <div class="order-card">
-                        <div class="order-header">
-                            <span class="order-id">#${order.id}</span>
-                            <span class="order-time"><i class="far fa-clock"></i> ${time}</span>
-                        </div>
-                        
-                        <div class="order-info">
-                            <div class="order-info-item">
-                                <span class="order-info-label">Tip</span>
-                                <span class="order-info-value">
-                                    <span class="order-type-badge ${isTable ? 'type-table' : 'type-delivery'}">
-                                        ${isTable ? `Masa ${order.table || '—'}` : 'Çatdırılma'}
-                                    </span>
+            case 'NEW_ORDER':
+                console.log('🛎️ YENİ SİFARİŞ!');
+                orders.unshift(data.order);
+                saveOrderToRevenue(data.order);
+                renderOrders();
+                updateStats();
+                updateRevenueDisplay();
+                
+                // SƏS ÇAL
+                if (data.notification?.sound) {
+                    playNotificationSound();
+                }
+                
+                showNotification('🛎️ Yeni Sifariş!', data.notification?.body || 'Yeni sifariş gəldi', 'new-order');
+                break;
+                
+            case 'ORDER_UPDATED':
+                const idx = orders.findIndex(o => o.id === data.order.id);
+                if (idx !== -1) { orders[idx] = data.order; renderOrders(); updateStats(); }
+                break;
+                
+            case 'ORDER_DELETED':
+                orders = orders.filter(o => o.id !== data.orderId);
+                renderOrders(); updateStats();
+                break;
+                
+            case 'ORDERS_CLEARED':
+                orders = []; renderOrders(); updateStats();
+                break;
+                
+            case 'REVENUE_UPDATED':
+                dailyRevenue = data.revenue;
+                localStorage.setItem('istanbulDailyRevenue', JSON.stringify(dailyRevenue));
+                updateRevenueDisplay();
+                break;
+        }
+    }
+
+    function saveOrderToRevenue(order) {
+        const date = new Date(order.timestamp).toISOString().split('T')[0];
+        const hour = new Date(order.timestamp).getHours();
+        if (hour < 9 || hour >= 21) return;
+        
+        if (!dailyRevenue[date]) {
+            dailyRevenue[date] = { total: 0, table: 0, delivery: 0, tableCount: 0, deliveryCount: 0 };
+        }
+        
+        dailyRevenue[date].total += order.total || 0;
+        if (order.orderType === 'table' || order.table) {
+            dailyRevenue[date].table += order.total || 0;
+            dailyRevenue[date].tableCount++;
+        } else {
+            dailyRevenue[date].delivery += order.total || 0;
+            dailyRevenue[date].deliveryCount++;
+        }
+        
+        localStorage.setItem('istanbulDailyRevenue', JSON.stringify(dailyRevenue));
+    }
+
+    function resetRevenue() {
+        if (!confirm('Gəlir statistikasını sıfırlamaq istədiyinizə əminsiniz?')) return;
+        
+        dailyRevenue = {};
+        localStorage.setItem('istanbulDailyRevenue', JSON.stringify(dailyRevenue));
+        updateRevenueDisplay();
+        
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({ type: 'RESET_REVENUE', secret }));
+        }
+        
+        showNotification('Gəlir Sıfırlandı', 'Statistika sıfırlandı', 'success');
+    }
+
+    function deleteOrder(orderId) {
+        if (!confirm('Bu sifarişi silmək istədiyinizə əminsiniz?')) return;
+        
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({ type: 'DELETE_ORDER', orderId, secret }));
+        }
+        
+        orders = orders.filter(o => o.id !== orderId);
+        renderOrders(); updateStats();
+    }
+
+    function clearAllOrders() {
+        if (!confirm('BÜTÜN sifarişləri silmək istədiyinizə əminsiniz?')) return;
+        
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({ type: 'CLEAR_ORDERS', secret }));
+        }
+        
+        orders = []; renderOrders(); updateStats();
+    }
+
+    function calculateRevenue(period) {
+        const dates = [];
+        for (let i = 0; i < period; i++) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            dates.push(d.toISOString().split('T')[0]);
+        }
+        
+        let total = 0, table = 0, delivery = 0, tableCount = 0, deliveryCount = 0;
+        
+        dates.forEach(date => {
+            if (dailyRevenue[date]) {
+                total += dailyRevenue[date].total || 0;
+                table += dailyRevenue[date].table || 0;
+                delivery += dailyRevenue[date].delivery || 0;
+                tableCount += dailyRevenue[date].tableCount || 0;
+                deliveryCount += dailyRevenue[date].deliveryCount || 0;
+            }
+        });
+        
+        return { total, table, delivery, tableCount, deliveryCount };
+    }
+
+    function updateRevenueDisplay() {
+        const rev = calculateRevenue(currentPeriod);
+        document.getElementById('totalRevenue').textContent = `${rev.total.toFixed(2)} ₼`;
+        document.getElementById('tableRevenue').textContent = `${rev.table.toFixed(2)} ₼`;
+        document.getElementById('deliveryRevenue').textContent = `${rev.delivery.toFixed(2)} ₼`;
+        document.getElementById('tableOrderCount').textContent = rev.tableCount;
+        document.getElementById('deliveryOrderCount').textContent = rev.deliveryCount;
+    }
+
+    function changePeriod(period) {
+        currentPeriod = period;
+        document.querySelectorAll('.period-btn').forEach((btn, i) => {
+            btn.classList.toggle('active', (i === 0 && period === 1) || (i === 1 && period === 3) || (i === 2 && period === 7));
+        });
+        updateRevenueDisplay();
+    }
+
+    function filterOrders(filter) {
+        currentFilter = filter;
+        document.querySelectorAll('.filter-tab').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.textContent.includes(getFilterName(filter))) btn.classList.add('active');
+        });
+        renderOrders();
+    }
+
+    function getFilterName(filter) {
+        const names = { all: 'Hamısı', pending: 'Gözləyən', preparing: 'Hazırlanan', ready: 'Hazır' };
+        return names[filter] || 'Hamısı';
+    }
+
+    function updateOrderStatus(orderId, status) {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({ type: 'UPDATE_ORDER_STATUS', orderId, status, secret }));
+        }
+    }
+
+    function renderOrders() {
+        let filteredOrders = orders.filter(o => currentFilter === 'all' || o.status === currentFilter);
+        
+        if (filteredOrders.length === 0) {
+            ordersList.innerHTML = `<div class="empty-state"><i class="fas fa-inbox"></i><h3>Sifariş yoxdur</h3></div>`;
+            return;
+        }
+        
+        ordersList.innerHTML = filteredOrders.map(order => {
+            const statusClass = `status-${order.status}`;
+            const statusText = { pending: 'Gözləyir', preparing: 'Hazırlanır', ready: 'Hazırdır', delivered: 'Çatdırıldı', completed: 'Tamamlandı', cancelled: 'Ləğv edildi' }[order.status] || order.status;
+            const time = new Date(order.timestamp).toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' });
+            const isTable = order.table || order.orderType === 'table';
+            
+            return `
+                <div class="order-card" onclick="unlockAudio()">
+                    <div class="order-header">
+                        <span class="order-id">#${order.id}</span>
+                        <span class="order-time"><i class="far fa-clock"></i> ${time}</span>
+                    </div>
+                    
+                    <div class="order-info">
+                        <div class="order-info-item">
+                            <span class="order-info-label">Tip</span>
+                            <span class="order-info-value">
+                                <span class="order-type-badge ${isTable ? 'type-table' : 'type-delivery'}">
+                                    ${isTable ? `Masa ${order.table || '—'}` : 'Çatdırılma'}
                                 </span>
-                            </div>
-                            <div class="order-info-item">
-                                <span class="order-info-label">Müştəri</span>
-                                <span class="order-info-value">${order.customer?.name || 'Anonim'}</span>
-                            </div>
+                            </span>
                         </div>
-                        
-                        <div class="order-items">
-                            ${order.items.map(item => `
-                                <div class="order-item">
-                                    <span>${item.quantity}x ${item.name}</span>
-                                    <span>${(item.price * item.quantity).toFixed(2)} ₼</span>
-                                </div>
-                            `).join('')}
-                            
-                            ${order.note ? `
-                                <div class="order-note">
-                                    <i class="fas fa-pencil-alt"></i>
-                                    <span><strong>Qeyd:</strong> ${order.note}</span>
-                                </div>
-                            ` : ''}
-                        </div>
-                        
-                        <div class="order-total">Ümumi: ${order.total?.toFixed(2) || '0.00'} ₼</div>
-                        
-                        <div class="order-actions">
-                            <span class="status-badge ${statusClass}">${statusText}</span>
-                            <select class="status-select" onchange="updateOrderStatus('${order.id}', this.value)">
-                                <option value="">Status</option>
-                                <option value="pending">Gözləyir</option>
-                                <option value="preparing">Hazırlanır</option>
-                                <option value="ready">Hazırdır</option>
-                                <option value="delivered">Çatdırıldı</option>
-                                <option value="completed">Tamamlandı</option>
-                            </select>
-                            <button class="delete-order-btn" onclick="event.stopPropagation(); deleteOrder('${order.id}')">
-                                <i class="fas fa-trash"></i> Sil
-                            </button>
+                        <div class="order-info-item">
+                            <span class="order-info-label">Müştəri</span>
+                            <span class="order-info-value">${order.customer?.name || 'Anonim'}</span>
                         </div>
                     </div>
-                `;
-            }).join('');
-        }
+                    
+                    <div class="order-items">
+                        ${order.items.map(item => `
+                            <div class="order-item">
+                                <span>${item.quantity}x ${item.name}</span>
+                                <span>${(item.price * item.quantity).toFixed(2)} ₼</span>
+                            </div>
+                        `).join('')}
+                        
+                        ${order.note ? `
+                            <div class="order-note">
+                                <i class="fas fa-pencil-alt"></i>
+                                <span><strong>Qeyd:</strong> ${order.note}</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="order-total">Ümumi: ${order.total?.toFixed(2) || '0.00'} ₼</div>
+                    
+                    <div class="order-actions">
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                        <select class="status-select" onchange="updateOrderStatus('${order.id}', this.value)">
+                            <option value="">Status</option>
+                            <option value="pending">Gözləyir</option>
+                            <option value="preparing">Hazırlanır</option>
+                            <option value="ready">Hazırdır</option>
+                            <option value="delivered">Çatdırıldı</option>
+                            <option value="completed">Tamamlandı</option>
+                        </select>
+                        <button class="delete-order-btn" onclick="event.stopPropagation(); deleteOrder('${order.id}')">
+                            <i class="fas fa-trash"></i> Sil
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
 
-        function updateStats() {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('pendingCount').textContent = orders.filter(o => o.status === 'pending').length;
-            document.getElementById('preparingCount').textContent = orders.filter(o => o.status === 'preparing').length;
-            document.getElementById('readyCount').textContent = orders.filter(o => o.status === 'ready').length;
-            document.getElementById('todayOrders').textContent = orders.filter(o => o.timestamp?.startsWith(today)).length;
-            document.getElementById('totalOrders').textContent = orders.length;
-        }
+    function updateStats() {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('pendingCount').textContent = orders.filter(o => o.status === 'pending').length;
+        document.getElementById('preparingCount').textContent = orders.filter(o => o.status === 'preparing').length;
+        document.getElementById('readyCount').textContent = orders.filter(o => o.status === 'ready').length;
+        document.getElementById('todayOrders').textContent = orders.filter(o => o.timestamp?.startsWith(today)).length;
+        document.getElementById('totalOrders').textContent = orders.length;
+    }
 
-        function showNotification(title, body, type = 'info') {
-            const toast = document.createElement('div');
-            toast.className = 'toast-message';
-            const icon = type === 'new-order' ? '🛎️' : type === 'success' ? '✅' : type === 'error' ? '❌' : '🔔';
-            
-            toast.innerHTML = `<div class="toast-icon">${icon}</div><div class="toast-content"><div class="toast-title">${title}</div><div class="toast-body">${body}</div></div>`;
-            toastContainer.appendChild(toast);
-            setTimeout(() => toast.remove(), 4000);
-        }
+    function showNotification(title, body, type = 'info') {
+        const toast = document.createElement('div');
+        toast.className = 'toast-message';
+        const icon = type === 'new-order' ? '🛎️' : type === 'success' ? '✅' : type === 'error' ? '❌' : '🔔';
+        
+        toast.innerHTML = `<div class="toast-icon">${icon}</div><div class="toast-content"><div class="toast-title">${title}</div><div class="toast-body">${body}</div></div>`;
+        toastContainer.appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
+    }
 
-        document.getElementById('secretInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') login();
-        });
+    // İlk toxunuşda səsi aktivləşdir
+    ['touchstart', 'click'].forEach(ev => {
+        document.body.addEventListener(ev, unlockAudio, { once: false, passive: true });
+    });
 
-        window.login = login;
-        window.logout = logout;
-        window.filterOrders = filterOrders;
-        window.updateOrderStatus = updateOrderStatus;
-        window.deleteOrder = deleteOrder;
-        window.clearAllOrders = clearAllOrders;
-        window.changePeriod = changePeriod;
-        window.resetRevenue = resetRevenue;
-        window.testSound = testSound;
+    document.getElementById('secretInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') login();
+    });
 
-        console.log('🍽️ İstanbul Kafe Admin Panel - Hazır');
-    </script>
+    window.login = login;
+    window.logout = logout;
+    window.filterOrders = filterOrders;
+    window.updateOrderStatus = updateOrderStatus;
+    window.deleteOrder = deleteOrder;
+    window.clearAllOrders = clearAllOrders;
+    window.changePeriod = changePeriod;
+    window.resetRevenue = resetRevenue;
+    window.unlockAudio = unlockAudio;
+
+    console.log('🍽️ İstanbul Kafe Admin Panel - Hazır');
+</script>
 </body>
 </html>
