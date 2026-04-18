@@ -18,13 +18,38 @@ app.use(require('cors')());
 // Static files
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Data qovluğu yarat
+const dataDir = path.join(__dirname, 'data');
+if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
+}
+
 // In-memory storage
 let orders = [];
 const connectedAdmins = new Set();
 const connectedClients = new Map();
 
-// Gəlir storage
+// Gəlir storage - fayldan yüklə
 let dailyRevenue = {};
+const revenuePath = path.join(dataDir, 'revenue.json');
+
+try {
+    if (fs.existsSync(revenuePath)) {
+        dailyRevenue = JSON.parse(fs.readFileSync(revenuePath, 'utf8'));
+        console.log(`💰 Gəlir məlumatları yükləndi: ${Object.keys(dailyRevenue).length} gün`);
+    }
+} catch (e) {
+    console.log('💰 Yeni gəlir storage başladı');
+}
+
+// Gəliri fayla yaz
+function saveRevenueToFile() {
+    try {
+        fs.writeFileSync(revenuePath, JSON.stringify(dailyRevenue, null, 2));
+    } catch (e) {
+        console.error('❌ Gəlir fayla yazılmadı:', e);
+    }
+}
 
 // Generate unique ID
 const generateId = () => {
@@ -59,7 +84,14 @@ function saveOrderToRevenue(order) {
         dailyRevenue[date].deliveryCount++;
     }
     
+    saveRevenueToFile();
     console.log(`💰 Gəlir yeniləndi: ${date} - ${dailyRevenue[date].total.toFixed(2)} AZN`);
+}
+
+function resetRevenueStorage() {
+    dailyRevenue = {};
+    saveRevenueToFile();
+    console.log('💰 Gəlir statistikası sıfırlandı');
 }
 
 // ============================================
@@ -127,7 +159,6 @@ function handleWebSocketMessage(ws, data) {
                 ws.isAdmin = true;
                 connectedAdmins.add(ws);
                 
-                // Bütün sifarişləri və gəliri göndər
                 ws.send(JSON.stringify({
                     type: 'ADMIN_REGISTERED',
                     message: 'Admin panelə qoşuldu',
@@ -173,6 +204,27 @@ function handleWebSocketMessage(ws, data) {
             handleClearOrders(ws, data);
             break;
             
+        case 'UPDATE_REVENUE':
+            if (data.secret === process.env.ADMIN_SECRET) {
+                dailyRevenue = data.revenue;
+                saveRevenueToFile();
+                broadcastToAdmins({
+                    type: 'REVENUE_UPDATED',
+                    revenue: dailyRevenue
+                });
+            }
+            break;
+            
+        case 'RESET_REVENUE':
+            if (data.secret === process.env.ADMIN_SECRET) {
+                resetRevenueStorage();
+                broadcastToAdmins({
+                    type: 'REVENUE_UPDATED',
+                    revenue: dailyRevenue
+                });
+            }
+            break;
+            
         case 'PING':
             ws.send(JSON.stringify({ type: 'PONG', timestamp: Date.now() }));
             break;
@@ -193,8 +245,6 @@ function handleNewOrder(ws, orderData) {
     };
     
     orders.push(order);
-    
-    // Gəliri yadda saxla
     saveOrderToRevenue(order);
     
     console.log(`📦 YENİ SİFARİŞ: ${orderId}`);
@@ -202,8 +252,8 @@ function handleNewOrder(ws, orderData) {
     console.log(`   Müştəri: ${order.customer?.name || 'Anonim'}`);
     console.log(`   Məbləğ: ${order.total?.toFixed(2)} AZN`);
     console.log(`   Məhsul sayı: ${order.items?.length || 0}`);
+    if (order.note) console.log(`   Qeyd: ${order.note}`);
     
-    // Müştəriyə təsdiq göndər
     ws.send(JSON.stringify({
         type: 'ORDER_CONFIRMED',
         orderId,
@@ -211,7 +261,6 @@ function handleNewOrder(ws, orderData) {
         estimatedTime: '20-30 dəqiqə'
     }));
     
-    // Bütün adminlərə bildiriş göndər
     broadcastToAdmins({
         type: 'NEW_ORDER',
         order,
@@ -223,7 +272,6 @@ function handleNewOrder(ws, orderData) {
         }
     });
     
-    // Gəlir yenilənməsini adminlərə göndər
     broadcastToAdmins({
         type: 'REVENUE_UPDATED',
         revenue: dailyRevenue
@@ -233,19 +281,13 @@ function handleNewOrder(ws, orderData) {
 // Handle Order Status Update
 function handleOrderStatusUpdate(ws, data) {
     if (!ws.isAdmin) {
-        ws.send(JSON.stringify({
-            type: 'ERROR',
-            message: 'Bu əməliyyat üçün admin hüququ lazımdır'
-        }));
+        ws.send(JSON.stringify({ type: 'ERROR', message: 'Bu əməliyyat üçün admin hüququ lazımdır' }));
         return;
     }
     
     const order = orders.find(o => o.id === data.orderId);
     if (!order) {
-        ws.send(JSON.stringify({
-            type: 'ERROR',
-            message: 'Sifariş tapılmadı'
-        }));
+        ws.send(JSON.stringify({ type: 'ERROR', message: 'Sifariş tapılmadı' }));
         return;
     }
     
@@ -254,7 +296,6 @@ function handleOrderStatusUpdate(ws, data) {
     
     console.log(`📝 Sifariş ${order.id} status: ${order.status}`);
     
-    // Müştəriyə status yeniləməsi göndər
     const clientWs = Array.from(wss.clients).find(c => c.clientId === order.wsClientId);
     if (clientWs && clientWs.readyState === WebSocket.OPEN) {
         clientWs.send(JSON.stringify({
@@ -265,22 +306,14 @@ function handleOrderStatusUpdate(ws, data) {
         }));
     }
     
-    // Admin paneli yenilə
-    broadcastToAdmins({
-        type: 'ORDER_UPDATED',
-        order
-    });
+    broadcastToAdmins({ type: 'ORDER_UPDATED', order });
 }
 
 // Handle Delete Order
 function handleDeleteOrder(ws, data) {
-    // Admin yoxlaması
     const isAdminBySecret = data.secret === process.env.ADMIN_SECRET;
     if (!ws.isAdmin && !isAdminBySecret) {
-        ws.send(JSON.stringify({
-            type: 'ERROR',
-            message: 'Bu əməliyyat üçün admin hüququ lazımdır'
-        }));
+        ws.send(JSON.stringify({ type: 'ERROR', message: 'Bu əməliyyat üçün admin hüququ lazımdır' }));
         return;
     }
     
@@ -288,45 +321,29 @@ function handleDeleteOrder(ws, data) {
     const orderExists = orders.find(o => o.id === orderId);
     
     if (!orderExists) {
-        ws.send(JSON.stringify({
-            type: 'ERROR',
-            message: 'Sifariş tapılmadı'
-        }));
+        ws.send(JSON.stringify({ type: 'ERROR', message: 'Sifariş tapılmadı' }));
         return;
     }
     
     orders = orders.filter(o => o.id !== orderId);
-    
     console.log(`🗑️ Sifariş silindi: ${orderId}`);
     
-    // Bütün adminlərə bildir
-    broadcastToAdmins({
-        type: 'ORDER_DELETED',
-        orderId: orderId
-    });
+    broadcastToAdmins({ type: 'ORDER_DELETED', orderId });
 }
 
 // Handle Clear All Orders
 function handleClearOrders(ws, data) {
     const isAdminBySecret = data.secret === process.env.ADMIN_SECRET;
     if (!ws.isAdmin && !isAdminBySecret) {
-        ws.send(JSON.stringify({
-            type: 'ERROR',
-            message: 'Bu əməliyyat üçün admin hüququ lazımdır'
-        }));
+        ws.send(JSON.stringify({ type: 'ERROR', message: 'Bu əməliyyat üçün admin hüququ lazımdır' }));
         return;
     }
     
     const deletedCount = orders.length;
     orders = [];
-    
     console.log(`🗑️ BÜTÜN SİFARİŞLƏR SİLİNDİ (${deletedCount} ədəd)`);
     
-    // Bütün adminlərə bildir
-    broadcastToAdmins({
-        type: 'ORDERS_CLEARED',
-        count: deletedCount
-    });
+    broadcastToAdmins({ type: 'ORDERS_CLEARED', count: deletedCount });
 }
 
 // Status mesajları
@@ -358,7 +375,6 @@ function broadcastToAdmins(data) {
 // REST API ENDPOINTS
 // ============================================
 
-// Health check
 app.get('/api/health', (req, res) => {
     res.json({
         status: 'OK',
@@ -370,70 +386,43 @@ app.get('/api/health', (req, res) => {
     });
 });
 
-// Yeni sifariş yoxlama (səsli bildiriş üçün)
 app.get('/api/orders/check-new', (req, res) => {
     const lastCheck = req.query.since ? new Date(req.query.since) : new Date(Date.now() - 10000);
     const newOrders = orders.filter(o => new Date(o.timestamp) > lastCheck);
     
-    res.json({
-        success: true,
-        newOrders: newOrders.length,
-        orders: newOrders
-    });
+    res.json({ success: true, newOrders: newOrders.length, orders: newOrders });
 });
 
-// Get all orders (admin only)
 app.get('/api/orders', (req, res) => {
     const { secret } = req.query;
-    
-    if (secret !== process.env.ADMIN_SECRET) {
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
+    if (secret !== process.env.ADMIN_SECRET) return res.status(401).json({ error: 'Unauthorized' });
     
     const { limit = 100, status } = req.query;
     let filteredOrders = orders;
+    if (status) filteredOrders = orders.filter(o => o.status === status);
     
-    if (status) {
-        filteredOrders = orders.filter(o => o.status === status);
-    }
-    
-    res.json({
-        success: true,
-        count: filteredOrders.length,
-        orders: filteredOrders.slice(-parseInt(limit)).reverse()
-    });
+    res.json({ success: true, count: filteredOrders.length, orders: filteredOrders.slice(-parseInt(limit)).reverse() });
 });
 
-// Get single order
 app.get('/api/orders/:orderId', (req, res) => {
     const { orderId } = req.params;
     const order = orders.find(o => o.id === orderId);
-    
-    if (!order) {
-        return res.status(404).json({ error: 'Sifariş tapılmadı' });
-    }
-    
+    if (!order) return res.status(404).json({ error: 'Sifariş tapılmadı' });
     res.json({ success: true, order });
 });
 
-// Create new order (HTTP fallback)
 app.post('/api/orders', (req, res) => {
     const orderData = req.body;
     const orderId = generateId();
     
-    const order = {
-        id: orderId,
-        ...orderData,
-        timestamp: new Date().toISOString(),
-        status: 'pending'
-    };
+    const order = { id: orderId, ...orderData, timestamp: new Date().toISOString(), status: 'pending' };
     
     orders.push(order);
     saveOrderToRevenue(order);
     
     console.log(`📦 HTTP Sifariş: ${orderId}`);
+    if (order.note) console.log(`   Qeyd: ${order.note}`);
     
-    // Adminlərə bildiriş
     broadcastToAdmins({
         type: 'NEW_ORDER',
         order,
@@ -444,123 +433,74 @@ app.post('/api/orders', (req, res) => {
         }
     });
     
-    broadcastToAdmins({
-        type: 'REVENUE_UPDATED',
-        revenue: dailyRevenue
-    });
+    broadcastToAdmins({ type: 'REVENUE_UPDATED', revenue: dailyRevenue });
     
-    res.json({
-        success: true,
-        orderId,
-        message: 'Sifariş qəbul edildi',
-        estimatedTime: '20-30 dəqiqə'
-    });
+    res.json({ success: true, orderId, message: 'Sifariş qəbul edildi', estimatedTime: '20-30 dəqiqə' });
 });
 
-// Update order status (admin only)
 app.patch('/api/orders/:orderId', (req, res) => {
     const { orderId } = req.params;
     const { secret, status } = req.body;
     
-    if (secret !== process.env.ADMIN_SECRET) {
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
+    if (secret !== process.env.ADMIN_SECRET) return res.status(401).json({ error: 'Unauthorized' });
     
     const order = orders.find(o => o.id === orderId);
-    if (!order) {
-        return res.status(404).json({ error: 'Sifariş tapılmadı' });
-    }
+    if (!order) return res.status(404).json({ error: 'Sifariş tapılmadı' });
     
     order.status = status;
     order.updatedAt = new Date().toISOString();
     
-    broadcastToAdmins({
-        type: 'ORDER_UPDATED',
-        order
-    });
-    
+    broadcastToAdmins({ type: 'ORDER_UPDATED', order });
     res.json({ success: true, order });
 });
 
-// Delete order (admin only)
 app.delete('/api/orders/:orderId', (req, res) => {
     const { orderId } = req.params;
     const { secret } = req.body;
     
-    if (secret !== process.env.ADMIN_SECRET) {
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
+    if (secret !== process.env.ADMIN_SECRET) return res.status(401).json({ error: 'Unauthorized' });
     
     const orderExists = orders.find(o => o.id === orderId);
-    if (!orderExists) {
-        return res.status(404).json({ error: 'Sifariş tapılmadı' });
-    }
+    if (!orderExists) return res.status(404).json({ error: 'Sifariş tapılmadı' });
     
     orders = orders.filter(o => o.id !== orderId);
-    
-    broadcastToAdmins({
-        type: 'ORDER_DELETED',
-        orderId
-    });
-    
+    broadcastToAdmins({ type: 'ORDER_DELETED', orderId });
     res.json({ success: true, message: 'Sifariş silindi' });
 });
 
-// Clear all orders (admin only)
 app.delete('/api/orders', (req, res) => {
     const { secret } = req.body;
-    
-    if (secret !== process.env.ADMIN_SECRET) {
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
+    if (secret !== process.env.ADMIN_SECRET) return res.status(401).json({ error: 'Unauthorized' });
     
     const deletedCount = orders.length;
     orders = [];
-    
-    broadcastToAdmins({
-        type: 'ORDERS_CLEARED',
-        count: deletedCount
-    });
-    
+    broadcastToAdmins({ type: 'ORDERS_CLEARED', count: deletedCount });
     res.json({ success: true, message: `${deletedCount} sifariş silindi` });
 });
 
-// Get revenue (admin only)
 app.get('/api/revenue', (req, res) => {
     const { secret } = req.query;
-    
-    if (secret !== process.env.ADMIN_SECRET) {
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
-    
-    res.json({
-        success: true,
-        revenue: dailyRevenue
-    });
+    if (secret !== process.env.ADMIN_SECRET) return res.status(401).json({ error: 'Unauthorized' });
+    res.json({ success: true, revenue: dailyRevenue });
 });
 
-// Get statistics (admin only)
+app.post('/api/revenue/reset', (req, res) => {
+    const { secret } = req.body;
+    if (secret !== process.env.ADMIN_SECRET) return res.status(401).json({ error: 'Unauthorized' });
+    
+    resetRevenueStorage();
+    broadcastToAdmins({ type: 'REVENUE_UPDATED', revenue: dailyRevenue });
+    res.json({ success: true, message: 'Gəlir sıfırlandı' });
+});
+
 app.get('/api/stats', (req, res) => {
     const { secret } = req.query;
-    
-    if (secret !== process.env.ADMIN_SECRET) {
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
+    if (secret !== process.env.ADMIN_SECRET) return res.status(401).json({ error: 'Unauthorized' });
     
     const today = new Date().toISOString().split('T')[0];
     const todayOrders = orders.filter(o => o.timestamp.startsWith(today));
-    
     const totalRevenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
     const todayRevenue = todayOrders.reduce((sum, o) => sum + (o.total || 0), 0);
-    
-    const statusCounts = {
-        pending: orders.filter(o => o.status === 'pending').length,
-        preparing: orders.filter(o => o.status === 'preparing').length,
-        ready: orders.filter(o => o.status === 'ready').length,
-        delivered: orders.filter(o => o.status === 'delivered').length,
-        completed: orders.filter(o => o.status === 'completed').length,
-        cancelled: orders.filter(o => o.status === 'cancelled').length
-    };
     
     res.json({
         success: true,
@@ -571,50 +511,34 @@ app.get('/api/stats', (req, res) => {
             todayRevenue,
             activeAdmins: connectedAdmins.size,
             connectedClients: wss.clients.size,
-            statusCounts
+            statusCounts: {
+                pending: orders.filter(o => o.status === 'pending').length,
+                preparing: orders.filter(o => o.status === 'preparing').length,
+                ready: orders.filter(o => o.status === 'ready').length,
+                delivered: orders.filter(o => o.status === 'delivered').length,
+                completed: orders.filter(o => o.status === 'completed').length,
+                cancelled: orders.filter(o => o.status === 'cancelled').length
+            }
         }
     });
 });
 
-// Admin auth check
 app.post('/api/admin/auth', (req, res) => {
     const { secret } = req.body;
-    
     if (secret === process.env.ADMIN_SECRET) {
-        res.json({
-            success: true,
-            message: 'Admin auth successful',
-            token: crypto.createHash('sha256').update(secret + Date.now()).digest('hex')
-        });
+        res.json({ success: true, message: 'Admin auth successful', token: crypto.createHash('sha256').update(secret + Date.now()).digest('hex') });
     } else {
         res.status(401).json({ success: false, error: 'Invalid secret' });
     }
 });
 
 // Serve HTML pages
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
+app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
+app.get('/qrcodes', (req, res) => res.sendFile(path.join(__dirname, 'public', 'qrcodes.html')));
+app.get('/menu', (req, res) => res.redirect(`/?table=${req.query.table || '1'}`));
 
-app.get('/admin', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'admin.html'));
-});
-
-app.get('/qrcodes', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'qrcodes.html'));
-});
-
-app.get('/menu', (req, res) => {
-    const table = req.query.table || '1';
-    res.redirect(`/?table=${table}`);
-});
-
-// 404 handler
-app.use((req, res) => {
-    res.status(404).json({ error: 'Endpoint tapılmadı' });
-});
-
-// Error handler
+app.use((req, res) => res.status(404).json({ error: 'Endpoint tapılmadı' }));
 app.use((err, req, res, next) => {
     console.error('❌ Server xətası:', err);
     res.status(500).json({ error: 'Server xətası baş verdi' });
@@ -642,21 +566,14 @@ server.listen(PORT, () => {
     `);
 });
 
-// Graceful shutdown
 process.on('SIGTERM', () => {
     console.log('👋 SIGTERM alındı, server bağlanır...');
-    server.close(() => {
-        console.log('✅ Server bağlandı');
-        process.exit(0);
-    });
+    server.close(() => process.exit(0));
 });
 
 process.on('SIGINT', () => {
     console.log('👋 SIGINT alındı, server bağlanır...');
-    server.close(() => {
-        console.log('✅ Server bağlandı');
-        process.exit(0);
-    });
+    server.close(() => process.exit(0));
 });
 
 module.exports = { app, server, wss };
