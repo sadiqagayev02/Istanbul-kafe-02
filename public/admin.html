@@ -2,8 +2,13 @@
 <html lang="az">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <meta name="theme-color" content="#36BEFF">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="İstanbul Admin">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/706/706164.png">
+    <link rel="manifest" href="data:application/manifest+json,{'name':'İstanbul Kafe Admin','short_name':'Admin','icons':[{'src':'https://cdn-icons-png.flaticon.com/512/706/706164.png','sizes':'512x512','type':'image/png'}],'start_url':'/admin','display':'standalone','background_color':'#36BEFF','theme_color':'#36BEFF'}">
     <title>İstanbul Kafe | Admin Panel</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,14 +34,15 @@
             --text: #1A1A1A;
             --text-secondary: #6B7280;
             --border: #E5E7EB;
-            --shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: linear-gradient(135deg, #36BEFF 0%, #FAFEFF 100%);
+            background: #FAFEFF;
             min-height: 100vh;
             color: var(--text);
+            -webkit-font-smoothing: antialiased;
         }
 
         /* Login Screen */
@@ -53,15 +59,15 @@
         .login-card {
             background: white;
             border-radius: 24px;
-            padding: 48px 40px;
-            width: 100%;
-            max-width: 420px;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            padding: 40px 32px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 40px -12px rgba(0,0,0,0.15);
             text-align: center;
         }
 
         .login-logo {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 800;
             color: var(--primary);
             margin-bottom: 8px;
@@ -70,106 +76,118 @@
         .login-subtitle {
             color: var(--text-secondary);
             margin-bottom: 32px;
+            font-size: 14px;
         }
 
         .login-input {
             width: 100%;
-            padding: 16px;
+            padding: 14px;
             border: 2px solid var(--border);
             border-radius: 12px;
             font-size: 16px;
             margin-bottom: 20px;
             text-align: center;
+            background: var(--bg);
         }
 
         .login-input:focus {
             outline: none;
             border-color: var(--primary);
+            background: white;
         }
 
         .login-btn {
             width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            padding: 14px;
+            background: var(--primary);
             color: white;
             border: none;
             border-radius: 12px;
             font-weight: 700;
             font-size: 16px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
         }
 
-        .login-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(54, 190, 255, 0.3);
+        .login-btn:active {
+            transform: scale(0.98);
+            background: var(--primary-dark);
         }
 
         .login-error {
             color: var(--danger);
             margin-top: 16px;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         /* Main Panel */
         #mainPanel {
             display: none;
             min-height: 100vh;
+            background: #FAFEFF;
         }
 
         /* Header */
         .admin-header {
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(20px);
+            background: white;
             border-bottom: 1px solid var(--border);
-            padding: 16px 24px;
+            padding: 12px 16px;
             position: sticky;
             top: 0;
             z-index: 100;
         }
 
         .header-content {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
         }
 
         .header-title {
-            font-size: 24px;
-            font-weight: 800;
+            font-size: 20px;
+            font-weight: 700;
             color: var(--primary);
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
         }
 
         .header-stats {
             display: flex;
-            gap: 16px;
+            gap: 8px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .stat-badge {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            background: white;
+            gap: 6px;
+            padding: 6px 12px;
+            background: var(--bg);
             border-radius: 50px;
-            box-shadow: var(--shadow);
+            font-size: 13px;
+            border: 1px solid var(--border);
         }
 
         .connection-status {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            padding: 6px 12px;
+            background: var(--bg);
+            border-radius: 50px;
+            font-size: 13px;
+            border: 1px solid var(--border);
         }
 
         .status-dot {
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             background: var(--success);
             animation: pulse 2s infinite;
@@ -187,52 +205,44 @@
 
         /* Dashboard */
         .dashboard {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 24px;
+            padding: 16px;
         }
 
         /* Statistics Cards */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
         }
 
         .stat-card {
             background: white;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: var(--shadow);
+            border-radius: 14px;
+            padding: 16px 12px;
             border: 1px solid var(--border);
         }
 
         .stat-label {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-secondary);
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
 
         .stat-value {
-            font-size: 32px;
-            font-weight: 800;
+            font-size: 28px;
+            font-weight: 700;
             color: var(--primary);
-        }
-
-        .stat-sub {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-top: 4px;
         }
 
         /* Revenue Section */
         .revenue-section {
             background: white;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 24px;
-            box-shadow: var(--shadow);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 16px;
             border: 1px solid var(--border);
         }
 
@@ -240,77 +250,107 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 16px;
-        }
-
-        .revenue-title {
-            font-size: 18px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
             gap: 10px;
         }
 
-        .period-selector {
+        .revenue-title {
+            font-size: 16px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .revenue-actions {
             display: flex;
             gap: 8px;
         }
 
-        .period-btn {
-            padding: 8px 16px;
+        .period-selector {
+            display: flex;
+            gap: 4px;
+            background: var(--bg);
+            padding: 3px;
             border-radius: 50px;
-            font-size: 13px;
+            border: 1px solid var(--border);
+        }
+
+        .period-btn {
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-size: 12px;
             font-weight: 600;
             cursor: pointer;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            transition: all 0.3s;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            transition: all 0.2s;
         }
 
         .period-btn.active {
             background: var(--primary);
             color: white;
-            border-color: var(--primary);
+        }
+
+        .reset-revenue-btn {
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            background: var(--warning);
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s;
+        }
+
+        .reset-revenue-btn:active {
+            transform: scale(0.98);
         }
 
         .revenue-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
         }
 
         .revenue-card {
             background: var(--bg);
             border-radius: 12px;
-            padding: 16px;
+            padding: 14px;
             border: 1px solid var(--border);
         }
 
         .revenue-card-title {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-secondary);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .revenue-card-value {
-            font-size: 28px;
-            font-weight: 800;
+            font-size: 24px;
+            font-weight: 700;
             color: var(--success);
         }
 
         .revenue-card-detail {
             display: flex;
             justify-content: space-between;
-            margin-top: 12px;
-            font-size: 13px;
+            margin-top: 8px;
+            font-size: 11px;
+            color: var(--text-secondary);
         }
 
         /* Orders Section */
         .orders-section {
             background: white;
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: var(--shadow);
+            border-radius: 14px;
+            padding: 16px;
             border: 1px solid var(--border);
         }
 
@@ -318,79 +358,84 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 20px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .section-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .section-actions {
             display: flex;
-            gap: 12px;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         .filter-tabs {
             display: flex;
-            gap: 6px;
+            gap: 4px;
+            background: var(--bg);
+            padding: 3px;
+            border-radius: 50px;
+            border: 1px solid var(--border);
         }
 
         .filter-tab {
-            padding: 8px 14px;
+            padding: 6px 12px;
             border-radius: 50px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             cursor: pointer;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            transition: all 0.3s;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            white-space: nowrap;
         }
 
         .filter-tab.active {
             background: var(--primary);
             color: white;
-            border-color: var(--primary);
         }
 
         .clear-all-btn {
-            padding: 8px 16px;
+            padding: 6px 12px;
             border-radius: 50px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             cursor: pointer;
             background: var(--danger);
             color: white;
             border: none;
-            transition: all 0.3s;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
         }
 
-        .clear-all-btn:hover {
-            background: #c0392b;
+        .clear-all-btn:active {
+            transform: scale(0.98);
         }
 
         /* Orders List */
         .orders-list {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            max-height: 500px;
+            gap: 10px;
+            max-height: 400px;
             overflow-y: auto;
         }
 
         .order-card {
             background: var(--bg);
             border-radius: 12px;
-            padding: 16px;
+            padding: 14px;
             border: 1px solid var(--border);
-            transition: all 0.3s;
-            animation: slideIn 0.3s ease;
+            animation: slideIn 0.2s ease;
         }
 
         .order-card.new {
@@ -399,21 +444,21 @@
         }
 
         @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-20px); }
-            to { opacity: 1; transform: translateX(0); }
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .order-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .order-id {
             font-weight: 700;
             color: var(--primary);
-            font-size: 13px;
+            font-size: 12px;
         }
 
         .order-time {
@@ -422,10 +467,10 @@
         }
 
         .order-info {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            display: flex;
+            flex-wrap: wrap;
             gap: 12px;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .order-info-item {
@@ -435,13 +480,13 @@
         }
 
         .order-info-label {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--text-secondary);
         }
 
         .order-info-value {
             font-weight: 600;
-            font-size: 13px;
+            font-size: 12px;
         }
 
         .order-type-badge {
@@ -457,8 +502,8 @@
         .type-delivery { background: #FEF3C7; color: #D97706; }
 
         .order-items {
-            margin-bottom: 12px;
-            padding: 10px;
+            margin-bottom: 10px;
+            padding: 8px 10px;
             background: white;
             border-radius: 8px;
         }
@@ -466,58 +511,56 @@
         .order-item {
             display: flex;
             justify-content: space-between;
-            padding: 4px 0;
-            font-size: 13px;
+            padding: 3px 0;
+            font-size: 12px;
         }
 
         .order-total {
             text-align: right;
             font-weight: 700;
-            font-size: 16px;
+            font-size: 14px;
             color: var(--primary);
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .order-actions {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
         }
 
         .status-select {
-            padding: 8px 12px;
+            padding: 6px 10px;
             border-radius: 8px;
             border: 1px solid var(--border);
             background: white;
-            font-weight: 500;
-            font-size: 12px;
+            font-size: 11px;
             cursor: pointer;
             flex: 1;
         }
 
         .status-badge {
-            padding: 5px 10px;
+            padding: 4px 8px;
             border-radius: 50px;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
         }
 
         .delete-order-btn {
-            padding: 8px 12px;
+            padding: 6px 10px;
             border-radius: 8px;
             background: var(--danger);
             color: white;
             border: none;
-            font-size: 12px;
+            font-size: 11px;
             cursor: pointer;
-            transition: all 0.3s;
             display: flex;
             align-items: center;
             gap: 4px;
         }
 
-        .delete-order-btn:hover {
+        .delete-order-btn:active {
             background: #c0392b;
         }
 
@@ -530,36 +573,36 @@
 
         .empty-state {
             text-align: center;
-            padding: 60px;
+            padding: 40px;
             color: var(--text-secondary);
         }
 
         .empty-state i {
-            font-size: 64px;
-            margin-bottom: 16px;
+            font-size: 48px;
+            margin-bottom: 12px;
             opacity: 0.5;
         }
 
         /* Notification Toast */
         .notification-toast {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: 16px;
+            right: 16px;
             z-index: 9999;
-            max-width: 400px;
+            max-width: 300px;
         }
 
         .toast-message {
             background: white;
             border-radius: 12px;
-            padding: 16px 20px;
-            margin-bottom: 12px;
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 12px;
             animation: toastSlideIn 0.3s ease;
-            border-left: 4px solid var(--primary);
+            border-left: 3px solid var(--primary);
         }
 
         @keyframes toastSlideIn {
@@ -568,15 +611,7 @@
         }
 
         .toast-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--primary-light);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary);
-            font-size: 20px;
+            font-size: 24px;
         }
 
         .toast-content {
@@ -585,33 +620,67 @@
 
         .toast-title {
             font-weight: 700;
-            margin-bottom: 4px;
+            font-size: 13px;
+            margin-bottom: 2px;
         }
 
         .toast-body {
-            font-size: 14px;
+            font-size: 12px;
             color: var(--text-secondary);
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                gap: 12px;
-            }
-            
-            .section-header {
-                flex-direction: column;
-                gap: 12px;
-                align-items: flex-start;
+        /* Install Button */
+        .install-btn {
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+            z-index: 1000;
+            padding: 10px 16px;
+            background: white;
+            border-radius: 50px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            display: none;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--primary);
+            border: 1px solid var(--border);
+            cursor: pointer;
+        }
+
+        .install-btn.show {
+            display: flex;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 600px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
             
             .revenue-grid {
                 grid-template-columns: 1fr;
             }
             
-            .order-actions {
-                flex-wrap: wrap;
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .filter-tabs {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .filter-tab {
+                flex: 1;
+                text-align: center;
             }
         }
     </style>
@@ -634,7 +703,6 @@
 
     <!-- Main Panel -->
     <div id="mainPanel">
-        <!-- Header -->
         <header class="admin-header">
             <div class="header-content">
                 <div class="header-title">
@@ -658,9 +726,7 @@
             </div>
         </header>
 
-        <!-- Dashboard -->
         <div class="dashboard">
-            <!-- Stats Grid -->
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-label">Gözləyən</div>
@@ -680,17 +746,21 @@
                 </div>
             </div>
 
-            <!-- Revenue Section -->
             <div class="revenue-section">
                 <div class="revenue-header">
                     <div class="revenue-title">
                         <i class="fas fa-chart-line"></i>
                         Gəlir Statistikası
                     </div>
-                    <div class="period-selector">
-                        <button class="period-btn active" onclick="changePeriod(1)">1 Gün</button>
-                        <button class="period-btn" onclick="changePeriod(3)">3 Gün</button>
-                        <button class="period-btn" onclick="changePeriod(7)">7 Gün</button>
+                    <div class="revenue-actions">
+                        <div class="period-selector">
+                            <button class="period-btn active" onclick="changePeriod(1)">1 Gün</button>
+                            <button class="period-btn" onclick="changePeriod(3)">3 Gün</button>
+                            <button class="period-btn" onclick="changePeriod(7)">7 Gün</button>
+                        </div>
+                        <button class="reset-revenue-btn" onclick="resetRevenue()">
+                            <i class="fas fa-undo-alt"></i> Sıfırla
+                        </button>
                     </div>
                 </div>
                 <div class="revenue-grid">
@@ -715,7 +785,6 @@
                 </div>
             </div>
 
-            <!-- Orders Section -->
             <div class="orders-section">
                 <div class="section-header">
                     <div class="section-title">
@@ -745,406 +814,443 @@
         </div>
     </div>
 
-    <!-- Notification Toast Container -->
     <div class="notification-toast" id="toastContainer"></div>
+    
+    <button class="install-btn" id="installBtn" onclick="installApp()">
+        <i class="fas fa-download"></i>
+        Tətbiqi Yüklə
+    </button>
 
-    <!-- Hidden Audio -->
     <audio id="notificationSound" preload="auto">
         <source src="data:audio/wav;base64,UklGRlwAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YVoAAACAgICAf39/f39/f39/f3+AgICAf39/f39/f39/f3+AgICAf39/f39/f39/f3+AgICAf39/f39/f39/f38=" type="audio/wav">
     </audio>
 
     <script>
-    // ============================================
-    // ADMIN PANEL SCRIPT - YENİ VERSİYA (MOBİL AUDİO DƏSTƏKLİ)
-    // ============================================
-    
-    let ws = null;
-    let orders = [];
-    let dailyRevenue = JSON.parse(localStorage.getItem('istanbulDailyRevenue') || '{}');
-    let currentFilter = 'all';
-    let currentPeriod = 1;
-    let secret = localStorage.getItem('admin_secret') || '';
-    let reconnectAttempts = 0;
-    let audioInitialized = false;
-    const maxReconnectAttempts = 5;
+        // ============================================
+        // ADMIN PANEL - STABİL + SIFIRLAMA + SƏS
+        // ============================================
+        
+        let ws = null;
+        let orders = [];
+        let dailyRevenue = JSON.parse(localStorage.getItem('istanbulDailyRevenue') || '{}');
+        let currentFilter = 'all';
+        let currentPeriod = 1;
+        let secret = localStorage.getItem('admin_secret') || '';
+        let reconnectAttempts = 0;
+        let audioInitialized = false;
+        let deferredPrompt = null;
+        const maxReconnectAttempts = 10;
 
-    // DOM Elements
-    const loginScreen = document.getElementById('loginScreen');
-    const mainPanel = document.getElementById('mainPanel');
-    const loginError = document.getElementById('loginError');
-    const connectionStatus = document.getElementById('connectionStatus');
-    const connectionText = document.getElementById('connectionText');
-    const ordersList = document.getElementById('ordersList');
-    const toastContainer = document.getElementById('toastContainer');
-    const notificationSound = document.getElementById('notificationSound');
+        const loginScreen = document.getElementById('loginScreen');
+        const mainPanel = document.getElementById('mainPanel');
+        const loginError = document.getElementById('loginError');
+        const connectionStatus = document.getElementById('connectionStatus');
+        const connectionText = document.getElementById('connectionText');
+        const ordersList = document.getElementById('ordersList');
+        const toastContainer = document.getElementById('toastContainer');
+        const notificationSound = document.getElementById('notificationSound');
 
-    // ============================================
-    // AUDIO UNLOCK (MOBİL ÜÇÜN)
-    // ============================================
-    function unlockAudio() {
-        if (audioInitialized) return;
-        
-        const audio = document.getElementById('notificationSound');
-        if (audio) {
-            audio.volume = 0;
-            audio.play().then(() => {
-                audio.pause();
-                audio.currentTime = 0;
-                audio.volume = 1;
-                audioInitialized = true;
-                console.log('🔊 Admin audio aktivləşdirildi');
-            }).catch(e => {
-                console.log('Audio aktivləşmədi:', e);
-            });
-        }
-    }
-    
-    function playNotificationSound() {
-        unlockAudio();
-        
-        const audio = document.getElementById('notificationSound');
-        if (audio) {
-            audio.currentTime = 0;
-            audio.play().catch(e => console.log('Səs çalına bilmədi:', e));
-        }
-    }
-
-    // Check if already logged in
-    if (secret) {
-        loginScreen.style.display = 'none';
-        mainPanel.style.display = 'block';
-        connectWebSocket();
-    }
-
-    // Login function
-    function login() {
-        const inputSecret = document.getElementById('secretInput').value;
-        
-        if (!inputSecret) {
-            loginError.textContent = 'Şifrə daxil edin';
-            return;
-        }
-        
-        // Login düyməsinə toxunanda audio-nu aktivləşdir
-        unlockAudio();
-        
-        fetch('/api/admin/auth', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ secret: inputSecret })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                secret = inputSecret;
-                localStorage.setItem('admin_secret', secret);
-                loginScreen.style.display = 'none';
-                mainPanel.style.display = 'block';
-                connectWebSocket();
-            } else {
-                loginError.textContent = 'Səhv şifrə';
-            }
-        })
-        .catch(() => {
-            loginError.textContent = 'Serverə qoşulmaq mümkün olmadı';
+        // ============================================
+        // PWA INSTALL
+        // ============================================
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installBtn').classList.add('show');
         });
-    }
 
-    function logout() {
-        localStorage.removeItem('admin_secret');
-        secret = '';
-        if (ws) ws.close();
-        loginScreen.style.display = 'flex';
-        mainPanel.style.display = 'none';
-        document.getElementById('secretInput').value = '';
-    }
-
-    function connectWebSocket() {
-        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const wsUrl = `${protocol}//${window.location.host}`;
-        
-        ws = new WebSocket(wsUrl);
-        
-        ws.onopen = () => {
-            console.log('✅ WebSocket bağlandı');
-            connectionStatus.classList.remove('disconnected');
-            connectionText.textContent = 'Online';
-            reconnectAttempts = 0;
-            
-            ws.send(JSON.stringify({ type: 'REGISTER_ADMIN', secret }));
-        };
-        
-        ws.onmessage = (event) => {
-            try {
-                const data = JSON.parse(event.data);
-                handleWebSocketMessage(data);
-            } catch (error) {}
-        };
-        
-        ws.onclose = () => {
-            connectionStatus.classList.add('disconnected');
-            connectionText.textContent = 'Offline';
-            if (reconnectAttempts < maxReconnectAttempts) {
-                reconnectAttempts++;
-                setTimeout(connectWebSocket, 3000);
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((result) => {
+                    if (result.outcome === 'accepted') {
+                        showNotification('✅ Tətbiq yüklənir', 'Ana ekrana əlavə edilir', 'success');
+                    }
+                    deferredPrompt = null;
+                    document.getElementById('installBtn').classList.remove('show');
+                });
+            } else {
+                showNotification('📱 Tətbiq', 'Brauzer menyusundan "Ana Ekrana Əlavə Et" seçin', 'info');
             }
-        };
-    }
+        }
 
-    function handleWebSocketMessage(data) {
-        switch (data.type) {
-            case 'ADMIN_REGISTERED':
-                if (data.orders) {
-                    orders = data.orders;
+        // ============================================
+        // AUDIO
+        // ============================================
+        function unlockAudio() {
+            if (audioInitialized) return;
+            
+            const audio = document.getElementById('notificationSound');
+            if (audio) {
+                audio.volume = 0;
+                audio.play().then(() => {
+                    audio.pause();
+                    audio.currentTime = 0;
+                    audio.volume = 1;
+                    audioInitialized = true;
+                    console.log('🔊 Audio aktivləşdirildi');
+                }).catch(() => {});
+            }
+        }
+        
+        function playNotificationSound() {
+            unlockAudio();
+            const audio = document.getElementById('notificationSound');
+            if (audio) {
+                audio.currentTime = 0;
+                audio.play().catch(() => {});
+            }
+        }
+
+        // ============================================
+        // LOGIN / WEBSOCKET
+        // ============================================
+        if (secret) {
+            loginScreen.style.display = 'none';
+            mainPanel.style.display = 'block';
+            connectWebSocket();
+        }
+
+        function login() {
+            const inputSecret = document.getElementById('secretInput').value;
+            if (!inputSecret) { loginError.textContent = 'Şifrə daxil edin'; return; }
+            
+            unlockAudio();
+            
+            fetch('/api/admin/auth', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ secret: inputSecret })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    secret = inputSecret;
+                    localStorage.setItem('admin_secret', secret);
+                    loginScreen.style.display = 'none';
+                    mainPanel.style.display = 'block';
+                    connectWebSocket();
+                } else {
+                    loginError.textContent = 'Səhv şifrə';
+                }
+            })
+            .catch(() => { loginError.textContent = 'Serverə qoşulmaq mümkün olmadı'; });
+        }
+
+        function logout() {
+            localStorage.removeItem('admin_secret');
+            secret = '';
+            if (ws) ws.close();
+            loginScreen.style.display = 'flex';
+            mainPanel.style.display = 'none';
+            document.getElementById('secretInput').value = '';
+        }
+
+        function connectWebSocket() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            ws = new WebSocket(`${protocol}//${window.location.host}`);
+            
+            ws.onopen = () => {
+                connectionStatus.classList.remove('disconnected');
+                connectionText.textContent = 'Online';
+                reconnectAttempts = 0;
+                ws.send(JSON.stringify({ type: 'REGISTER_ADMIN', secret }));
+            };
+            
+            ws.onmessage = (event) => {
+                try { handleWebSocketMessage(JSON.parse(event.data)); } catch (e) {}
+            };
+            
+            ws.onclose = () => {
+                connectionStatus.classList.add('disconnected');
+                connectionText.textContent = 'Offline';
+                if (reconnectAttempts < maxReconnectAttempts) {
+                    reconnectAttempts++;
+                    setTimeout(connectWebSocket, 3000);
+                }
+            };
+        }
+
+        function handleWebSocketMessage(data) {
+            switch (data.type) {
+                case 'ADMIN_REGISTERED':
+                    if (data.orders) {
+                        orders = data.orders;
+                        renderOrders();
+                        updateStats();
+                    }
+                    if (data.revenue) {
+                        dailyRevenue = data.revenue;
+                        localStorage.setItem('istanbulDailyRevenue', JSON.stringify(dailyRevenue));
+                    }
+                    updateRevenueDisplay();
+                    showNotification('Admin Panel', 'Bağlantı quruldu', 'success');
+                    break;
+                    
+                case 'NEW_ORDER':
+                    orders.unshift(data.order);
+                    saveOrderToRevenue(data.order);
                     renderOrders();
                     updateStats();
                     updateRevenueDisplay();
-                }
-                showNotification('Admin Panelə Xoş Gəldiniz', 'Bağlantı uğurla quruldu', 'success');
-                break;
-                
-            case 'NEW_ORDER':
-                const newOrder = data.order;
-                orders.unshift(newOrder);
-                saveOrderToRevenue(newOrder);
-                renderOrders();
-                updateStats();
-                updateRevenueDisplay();
-                
-                if (data.notification?.sound) {
-                    playNotificationSound();
-                }
-                
-                showNotification('🛎️ Yeni Sifariş!', data.notification?.body || 'Yeni sifariş gəldi', 'new-order');
-                break;
-                
-            case 'ORDER_UPDATED':
-                const updatedOrder = data.order;
-                const index = orders.findIndex(o => o.id === updatedOrder.id);
-                if (index !== -1) {
-                    orders[index] = updatedOrder;
-                    renderOrders();
-                    updateStats();
-                }
-                break;
-        }
-    }
-
-    // Gəliri localStorage-a saxla
-    function saveOrderToRevenue(order) {
-        const date = new Date(order.timestamp).toISOString().split('T')[0];
-        const hour = new Date(order.timestamp).getHours();
-        
-        // Yalnız 09:00-21:00 arası sifarişləri qeyd et
-        if (hour < 9 || hour >= 21) return;
-        
-        if (!dailyRevenue[date]) {
-            dailyRevenue[date] = { total: 0, table: 0, delivery: 0, tableCount: 0, deliveryCount: 0 };
-        }
-        
-        dailyRevenue[date].total += order.total || 0;
-        if (order.orderType === 'table' || order.table) {
-            dailyRevenue[date].table += order.total || 0;
-            dailyRevenue[date].tableCount++;
-        } else {
-            dailyRevenue[date].delivery += order.total || 0;
-            dailyRevenue[date].deliveryCount++;
-        }
-        
-        localStorage.setItem('istanbulDailyRevenue', JSON.stringify(dailyRevenue));
-    }
-
-    // Sifarişi sil
-    function deleteOrder(orderId) {
-        if (!confirm('Bu sifarişi silmək istədiyinizə əminsiniz?')) return;
-        
-        orders = orders.filter(o => o.id !== orderId);
-        renderOrders();
-        updateStats();
-        showNotification('Sifariş Silindi', `#${orderId} nömrəli sifariş silindi`, 'info');
-    }
-
-    // Bütün sifarişləri sil
-    function clearAllOrders() {
-        if (!confirm('BÜTÜN sifarişləri silmək istədiyinizə əminsiniz? Gəlir məlumatları qalacaq.')) return;
-        
-        orders = [];
-        renderOrders();
-        updateStats();
-        showNotification('Sifarişlər Silindi', 'Bütün sifarişlər təmizləndi', 'success');
-    }
-
-    // Gəlir hesabatı
-    function calculateRevenue(period) {
-        const dates = [];
-        for (let i = 0; i < period; i++) {
-            const d = new Date();
-            d.setDate(d.getDate() - i);
-            dates.push(d.toISOString().split('T')[0]);
-        }
-        
-        let total = 0, table = 0, delivery = 0, tableCount = 0, deliveryCount = 0;
-        
-        dates.forEach(date => {
-            if (dailyRevenue[date]) {
-                total += dailyRevenue[date].total || 0;
-                table += dailyRevenue[date].table || 0;
-                delivery += dailyRevenue[date].delivery || 0;
-                tableCount += dailyRevenue[date].tableCount || 0;
-                deliveryCount += dailyRevenue[date].deliveryCount || 0;
+                    
+                    if (data.notification?.sound) playNotificationSound();
+                    showNotification('🛎️ Yeni Sifariş!', data.notification?.body || 'Yeni sifariş gəldi', 'new-order');
+                    break;
+                    
+                case 'ORDER_UPDATED':
+                    const idx = orders.findIndex(o => o.id === data.order.id);
+                    if (idx !== -1) { orders[idx] = data.order; renderOrders(); updateStats(); }
+                    break;
+                    
+                case 'ORDER_DELETED':
+                    orders = orders.filter(o => o.id !== data.orderId);
+                    renderOrders(); updateStats();
+                    showNotification('Sifariş Silindi', `#${data.orderId} silindi`, 'info');
+                    break;
+                    
+                case 'ORDERS_CLEARED':
+                    orders = []; renderOrders(); updateStats();
+                    showNotification('Sifarişlər Silindi', 'Bütün sifarişlər silindi', 'info');
+                    break;
+                    
+                case 'REVENUE_UPDATED':
+                    dailyRevenue = data.revenue;
+                    localStorage.setItem('istanbulDailyRevenue', JSON.stringify(dailyRevenue));
+                    updateRevenueDisplay();
+                    break;
             }
-        });
-        
-        return { total, table, delivery, tableCount, deliveryCount };
-    }
-
-    function updateRevenueDisplay() {
-        const rev = calculateRevenue(currentPeriod);
-        document.getElementById('totalRevenue').textContent = `${rev.total.toFixed(2)} ₼`;
-        document.getElementById('tableRevenue').textContent = `${rev.table.toFixed(2)} ₼`;
-        document.getElementById('deliveryRevenue').textContent = `${rev.delivery.toFixed(2)} ₼`;
-        document.getElementById('tableOrderCount').textContent = rev.tableCount;
-        document.getElementById('deliveryOrderCount').textContent = rev.deliveryCount;
-    }
-
-    function changePeriod(period) {
-        currentPeriod = period;
-        document.querySelectorAll('.period-btn').forEach((btn, i) => {
-            btn.classList.toggle('active', (i === 0 && period === 1) || (i === 1 && period === 3) || (i === 2 && period === 7));
-        });
-        updateRevenueDisplay();
-    }
-
-    function filterOrders(filter) {
-        currentFilter = filter;
-        document.querySelectorAll('.filter-tab').forEach(btn => {
-            btn.classList.remove('active');
-            if (btn.textContent.includes(getFilterName(filter))) btn.classList.add('active');
-        });
-        renderOrders();
-    }
-
-    function getFilterName(filter) {
-        const names = { all: 'Hamısı', pending: 'Gözləyən', preparing: 'Hazırlanan', ready: 'Hazır' };
-        return names[filter] || 'Hamısı';
-    }
-
-    function updateOrderStatus(orderId, status) {
-        ws.send(JSON.stringify({ type: 'UPDATE_ORDER_STATUS', orderId, status }));
-        showNotification('Status Yeniləndi', `Sifariş statusu: ${status}`, 'success');
-    }
-
-    function renderOrders() {
-        let filteredOrders = orders.filter(o => currentFilter === 'all' || o.status === currentFilter);
-        
-        if (filteredOrders.length === 0) {
-            ordersList.innerHTML = `<div class="empty-state"><i class="fas fa-inbox"></i><h3>Sifariş yoxdur</h3></div>`;
-            return;
         }
-        
-        ordersList.innerHTML = filteredOrders.map(order => {
-            const statusClass = `status-${order.status}`;
-            const statusText = { pending: 'Gözləyir', preparing: 'Hazırlanır', ready: 'Hazırdır', delivered: 'Çatdırıldı', completed: 'Tamamlandı', cancelled: 'Ləğv edildi' }[order.status] || order.status;
-            const time = new Date(order.timestamp).toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' });
-            const isTable = order.table || order.orderType === 'table';
+
+        function saveOrderToRevenue(order) {
+            const date = new Date(order.timestamp).toISOString().split('T')[0];
+            const hour = new Date(order.timestamp).getHours();
+            if (hour < 9 || hour >= 21) return;
             
-            return `
-                <div class="order-card" onclick="unlockAudio()">
-                    <div class="order-header">
-                        <span class="order-id">#${order.id}</span>
-                        <span class="order-time"><i class="far fa-clock"></i> ${time}</span>
-                    </div>
-                    
-                    <div class="order-info">
-                        <div class="order-info-item">
-                            <span class="order-info-label">Tip</span>
-                            <span class="order-info-value">
-                                <span class="order-type-badge ${isTable ? 'type-table' : 'type-delivery'}">
-                                    ${isTable ? `Masa ${order.table || '—'}` : 'Çatdırılma'}
-                                </span>
-                            </span>
+            if (!dailyRevenue[date]) {
+                dailyRevenue[date] = { total: 0, table: 0, delivery: 0, tableCount: 0, deliveryCount: 0 };
+            }
+            
+            dailyRevenue[date].total += order.total || 0;
+            if (order.orderType === 'table' || order.table) {
+                dailyRevenue[date].table += order.total || 0;
+                dailyRevenue[date].tableCount++;
+            } else {
+                dailyRevenue[date].delivery += order.total || 0;
+                dailyRevenue[date].deliveryCount++;
+            }
+            
+            localStorage.setItem('istanbulDailyRevenue', JSON.stringify(dailyRevenue));
+            
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ type: 'UPDATE_REVENUE', revenue: dailyRevenue, secret }));
+            }
+        }
+
+        function resetRevenue() {
+            if (!confirm('Gəlir statistikasını sıfırlamaq istədiyinizə əminsiniz?')) return;
+            
+            dailyRevenue = {};
+            localStorage.setItem('istanbulDailyRevenue', JSON.stringify(dailyRevenue));
+            updateRevenueDisplay();
+            
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ type: 'RESET_REVENUE', secret }));
+            }
+            
+            showNotification('Gəlir Sıfırlandı', 'Statistika sıfırlandı', 'success');
+        }
+
+        function deleteOrder(orderId) {
+            if (!confirm('Bu sifarişi silmək istədiyinizə əminsiniz?')) return;
+            
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ type: 'DELETE_ORDER', orderId, secret }));
+            }
+            
+            orders = orders.filter(o => o.id !== orderId);
+            renderOrders(); updateStats();
+            showNotification('Sifariş Silindi', `#${orderId} silindi`, 'info');
+        }
+
+        function clearAllOrders() {
+            if (!confirm('BÜTÜN sifarişləri silmək istədiyinizə əminsiniz?')) return;
+            
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ type: 'CLEAR_ORDERS', secret }));
+            }
+            
+            orders = []; renderOrders(); updateStats();
+            showNotification('Sifarişlər Silindi', 'Bütün sifarişlər təmizləndi', 'success');
+        }
+
+        function calculateRevenue(period) {
+            const dates = [];
+            for (let i = 0; i < period; i++) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                dates.push(d.toISOString().split('T')[0]);
+            }
+            
+            let total = 0, table = 0, delivery = 0, tableCount = 0, deliveryCount = 0;
+            
+            dates.forEach(date => {
+                if (dailyRevenue[date]) {
+                    total += dailyRevenue[date].total || 0;
+                    table += dailyRevenue[date].table || 0;
+                    delivery += dailyRevenue[date].delivery || 0;
+                    tableCount += dailyRevenue[date].tableCount || 0;
+                    deliveryCount += dailyRevenue[date].deliveryCount || 0;
+                }
+            });
+            
+            return { total, table, delivery, tableCount, deliveryCount };
+        }
+
+        function updateRevenueDisplay() {
+            const rev = calculateRevenue(currentPeriod);
+            document.getElementById('totalRevenue').textContent = `${rev.total.toFixed(2)} ₼`;
+            document.getElementById('tableRevenue').textContent = `${rev.table.toFixed(2)} ₼`;
+            document.getElementById('deliveryRevenue').textContent = `${rev.delivery.toFixed(2)} ₼`;
+            document.getElementById('tableOrderCount').textContent = rev.tableCount;
+            document.getElementById('deliveryOrderCount').textContent = rev.deliveryCount;
+        }
+
+        function changePeriod(period) {
+            currentPeriod = period;
+            document.querySelectorAll('.period-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', (i === 0 && period === 1) || (i === 1 && period === 3) || (i === 2 && period === 7));
+            });
+            updateRevenueDisplay();
+        }
+
+        function filterOrders(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-tab').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.includes(getFilterName(filter))) btn.classList.add('active');
+            });
+            renderOrders();
+        }
+
+        function getFilterName(filter) {
+            const names = { all: 'Hamısı', pending: 'Gözləyən', preparing: 'Hazırlanan', ready: 'Hazır' };
+            return names[filter] || 'Hamısı';
+        }
+
+        function updateOrderStatus(orderId, status) {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ type: 'UPDATE_ORDER_STATUS', orderId, status, secret }));
+            }
+            showNotification('Status Yeniləndi', `Sifariş statusu: ${status}`, 'success');
+        }
+
+        function renderOrders() {
+            let filteredOrders = orders.filter(o => currentFilter === 'all' || o.status === currentFilter);
+            
+            if (filteredOrders.length === 0) {
+                ordersList.innerHTML = `<div class="empty-state"><i class="fas fa-inbox"></i><h3>Sifariş yoxdur</h3></div>`;
+                return;
+            }
+            
+            ordersList.innerHTML = filteredOrders.map(order => {
+                const statusClass = `status-${order.status}`;
+                const statusText = { pending: 'Gözləyir', preparing: 'Hazırlanır', ready: 'Hazırdır', delivered: 'Çatdırıldı', completed: 'Tamamlandı', cancelled: 'Ləğv edildi' }[order.status] || order.status;
+                const time = new Date(order.timestamp).toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' });
+                const isTable = order.table || order.orderType === 'table';
+                
+                return `
+                    <div class="order-card" onclick="unlockAudio()">
+                        <div class="order-header">
+                            <span class="order-id">#${order.id}</span>
+                            <span class="order-time"><i class="far fa-clock"></i> ${time}</span>
                         </div>
-                        <div class="order-info-item">
-                            <span class="order-info-label">Müştəri</span>
-                            <span class="order-info-value">${order.customer?.name || 'Anonim'}</span>
-                        </div>
-                        ${!isTable && order.address ? `
+                        
+                        <div class="order-info">
                             <div class="order-info-item">
-                                <span class="order-info-label">Ünvan</span>
-                                <span class="order-info-value">${order.address.substring(0, 30)}...</span>
+                                <span class="order-info-label">Tip</span>
+                                <span class="order-info-value">
+                                    <span class="order-type-badge ${isTable ? 'type-table' : 'type-delivery'}">
+                                        ${isTable ? `Masa ${order.table || '—'}` : 'Çatdırılma'}
+                                    </span>
+                                </span>
                             </div>
-                        ` : ''}
-                    </div>
-                    
-                    <div class="order-items">
-                        ${order.items.map(item => `
-                            <div class="order-item">
-                                <span>${item.quantity}x ${item.name}</span>
-                                <span>${(item.price * item.quantity).toFixed(2)} ₼</span>
+                            <div class="order-info-item">
+                                <span class="order-info-label">Müştəri</span>
+                                <span class="order-info-value">${order.customer?.name || 'Anonim'}</span>
                             </div>
-                        `).join('')}
+                        </div>
+                        
+                        <div class="order-items">
+                            ${order.items.map(item => `
+                                <div class="order-item">
+                                    <span>${item.quantity}x ${item.name}</span>
+                                    <span>${(item.price * item.quantity).toFixed(2)} ₼</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <div class="order-total">Ümumi: ${order.total?.toFixed(2) || '0.00'} ₼</div>
+                        
+                        <div class="order-actions">
+                            <span class="status-badge ${statusClass}">${statusText}</span>
+                            <select class="status-select" onchange="updateOrderStatus('${order.id}', this.value)">
+                                <option value="">Status</option>
+                                <option value="pending">Gözləyir</option>
+                                <option value="preparing">Hazırlanır</option>
+                                <option value="ready">Hazırdır</option>
+                                <option value="delivered">Çatdırıldı</option>
+                                <option value="completed">Tamamlandı</option>
+                            </select>
+                            <button class="delete-order-btn" onclick="event.stopPropagation(); deleteOrder('${order.id}')">
+                                <i class="fas fa-trash"></i> Sil
+                            </button>
+                        </div>
                     </div>
-                    
-                    <div class="order-total">Ümumi: ${order.total?.toFixed(2) || '0.00'} ₼</div>
-                    
-                    <div class="order-actions">
-                        <span class="status-badge ${statusClass}">${statusText}</span>
-                        <select class="status-select" onchange="updateOrderStatus('${order.id}', this.value)">
-                            <option value="">Status</option>
-                            <option value="pending">Gözləyir</option>
-                            <option value="preparing">Hazırlanır</option>
-                            <option value="ready">Hazırdır</option>
-                            <option value="delivered">Çatdırıldı</option>
-                            <option value="completed">Tamamlandı</option>
-                        </select>
-                        <button class="delete-order-btn" onclick="event.stopPropagation(); deleteOrder('${order.id}')">
-                            <i class="fas fa-trash"></i> Sil
-                        </button>
-                    </div>
-                </div>
-            `;
-        }).join('');
-    }
+                `;
+            }).join('');
+        }
 
-    function updateStats() {
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('pendingCount').textContent = orders.filter(o => o.status === 'pending').length;
-        document.getElementById('preparingCount').textContent = orders.filter(o => o.status === 'preparing').length;
-        document.getElementById('readyCount').textContent = orders.filter(o => o.status === 'ready').length;
-        document.getElementById('todayOrders').textContent = orders.filter(o => o.timestamp?.startsWith(today)).length;
-        document.getElementById('totalOrders').textContent = orders.length;
-    }
+        function updateStats() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('pendingCount').textContent = orders.filter(o => o.status === 'pending').length;
+            document.getElementById('preparingCount').textContent = orders.filter(o => o.status === 'preparing').length;
+            document.getElementById('readyCount').textContent = orders.filter(o => o.status === 'ready').length;
+            document.getElementById('todayOrders').textContent = orders.filter(o => o.timestamp?.startsWith(today)).length;
+            document.getElementById('totalOrders').textContent = orders.length;
+        }
 
-    function showNotification(title, body, type = 'info') {
-        const toast = document.createElement('div');
-        toast.className = 'toast-message';
-        const icon = type === 'new-order' ? '🛎️' : type === 'success' ? '✅' : type === 'error' ? '❌' : '🔔';
-        
-        toast.innerHTML = `<div class="toast-icon">${icon}</div><div class="toast-content"><div class="toast-title">${title}</div><div class="toast-body">${body}</div></div>`;
-        toastContainer.appendChild(toast);
-        setTimeout(() => toast.remove(), 4000);
-    }
+        function showNotification(title, body, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = 'toast-message';
+            const icon = type === 'new-order' ? '🛎️' : type === 'success' ? '✅' : type === 'error' ? '❌' : '🔔';
+            
+            toast.innerHTML = `<div class="toast-icon">${icon}</div><div class="toast-content"><div class="toast-title">${title}</div><div class="toast-body">${body}</div></div>`;
+            toastContainer.appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
+        }
 
-    // İlk toxunuşda audio-nu aktivləşdir
-    ['touchstart', 'click'].forEach(eventType => {
-        document.body.addEventListener(eventType, unlockAudio, { once: false, passive: true });
-    });
+        // Audio unlock on first touch
+        ['touchstart', 'click'].forEach(ev => {
+            document.body.addEventListener(ev, unlockAudio, { once: false, passive: true });
+        });
 
-    // Global functions
-    window.login = login;
-    window.logout = logout;
-    window.filterOrders = filterOrders;
-    window.updateOrderStatus = updateOrderStatus;
-    window.deleteOrder = deleteOrder;
-    window.clearAllOrders = clearAllOrders;
-    window.changePeriod = changePeriod;
-    window.unlockAudio = unlockAudio;
+        document.getElementById('secretInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') login();
+        });
 
-    document.getElementById('secretInput').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') login();
-    });
+        window.login = login;
+        window.logout = logout;
+        window.filterOrders = filterOrders;
+        window.updateOrderStatus = updateOrderStatus;
+        window.deleteOrder = deleteOrder;
+        window.clearAllOrders = clearAllOrders;
+        window.changePeriod = changePeriod;
+        window.resetRevenue = resetRevenue;
+        window.unlockAudio = unlockAudio;
+        window.installApp = installApp;
 
-    console.log('🍽️ İstanbul Kafe Admin Panel - Yeni Versiya');
-</script>
+        console.log('🍽️ İstanbul Kafe Admin Panel - Stabil Versiya');
+    </script>
 </body>
 </html>
